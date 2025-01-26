@@ -30,14 +30,8 @@ export default function HomePage() {
           </h1>
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/requests/new"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 transition-colors"
-            >
-              依頼を作成する
-            </Link>
-            <Link
               href="/requests"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-200 bg-indigo-900 bg-opacity-50 hover:bg-opacity-70 transition-colors"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 transition-colors"
             >
               依頼を探す
             </Link>

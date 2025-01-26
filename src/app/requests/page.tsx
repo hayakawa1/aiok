@@ -75,9 +75,11 @@ export default function RequestsPage() {
         method: 'POST'
       });
       if (!response.ok) throw new Error('依頼の拒否に失敗しました');
-      fetchRequests();
+      await fetchRequests();
+      toast.success('依頼を拒否しました');
     } catch (error) {
-      alert('依頼の拒否に失敗しました');
+      console.error('Error rejecting request:', error);
+      toast.error('依頼の拒否に失敗しました');
     }
   };
 
