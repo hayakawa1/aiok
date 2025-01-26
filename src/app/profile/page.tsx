@@ -110,31 +110,31 @@ export default function ProfilePage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* アバター画像 */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="flex flex-col items-center">
+                <label className="block text-sm font-medium text-gray-700 mb-4">
                   プロフィール画像
                 </label>
-                <div className="flex items-center gap-6">
-                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100">
-                    <Image
-                      src={profile.image || '/images/default-avatar.png'}
-                      alt="プロフィール画像"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <label className="btn-secondary cursor-pointer">
-                    画像を変更
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                  </label>
+                <div className="relative aspect-square w-48 rounded-full overflow-hidden mb-4">
+                  <Image
+                    src={profile.image || '/images/default-avatar.svg'}
+                    alt="プロフィール画像"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 192px, 192px"
+                    priority
+                  />
                 </div>
+                <label className="btn-secondary cursor-pointer">
+                  画像を変更
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </label>
               </div>
 
               {/* 名前 */}

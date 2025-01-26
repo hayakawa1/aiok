@@ -58,14 +58,6 @@ export function Navigation({ session }: NavigationProps) {
               AIOK
             </Link>
           </div>
-          
-          <div className="hidden md:ml-8 md:flex md:space-x-4">
-            <Link href="/search" 
-              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors">
-              <span className="material-symbols-outlined mr-2">search</span>
-              探す
-            </Link>
-          </div>
         </div>
         
         <div className="flex items-center gap-4">
@@ -78,13 +70,15 @@ export function Navigation({ session }: NavigationProps) {
                 }}
                 data-menu-container
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 p-2 rounded-full hover:bg-gray-50 transition-colors">
-                <Image
-                  src={userImage || session.user.image || '/images/default-avatar.svg'}
-                  alt="プロフィール画像"
-                  width={32}
-                  height={32}
-                  className="rounded-full"
-                />
+                <div className="w-8 h-8 rounded-full overflow-hidden">
+                  <Image
+                    src={userImage || session.user.image || '/images/default-avatar.svg'}
+                    alt="プロフィール画像"
+                    width={32}
+                    height={32}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
                 <span className="material-symbols-outlined">expand_more</span>
               </button>
               
@@ -127,33 +121,6 @@ export function Navigation({ session }: NavigationProps) {
                 </div>
               )}
             </div>
-          ) : (
-            <Link href="/api/auth/signin"
-              className="nav-link nav-link-inactive">
-              <span className="material-symbols-outlined">login</span>
-              Googleでログイン
-            </Link>
-          )}
-        </div>
-      </div>
-      
-      {/* モバイルメニュー */}
-      <div className={`md:hidden ${isMobileMenuOpen ? '' : 'hidden'}`}>
-        <div className="px-2 pt-2 pb-3 space-y-1">
-          <Link href="/search" 
-            className="nav-link">
-            <span className="material-symbols-outlined">search</span>
-            探す
-          </Link>
-          
-          {session?.user ? (
-            <>
-              <Link href="/requests" 
-                className="nav-link">
-                <span className="material-symbols-outlined">history</span>
-                依頼履歴
-              </Link>
-            </>
           ) : (
             <Link href="/api/auth/signin"
               className="nav-link nav-link-inactive">

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
+import { getStorage } from '@/lib/storage';
+import sharp from 'sharp';
 
 export async function POST(request: Request) {
   try {
@@ -16,23 +18,29 @@ export async function POST(request: Request) {
       return new NextResponse('No file uploaded', { status: 400 });
     }
 
-    // TODO: ここで実際の画像アップロード処理を実装
-    // 例: AWS S3やCloudinaryなどのサービスを使用
+    // 画像をBufferに変換
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    // 仮の実装として、Base64エンコードした画像URLを返す
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString('base64');
-    const mimeType = file.type;
-    const dataUrl = `data:${mimeType};base64,${base64}`;
+    // 画像の処理
+    const processedImageBuffer = await sharp(buffer)
+      .resize(400, 400, {
+        fit: 'cover',
+        position: 'center'
+      })
+      .toBuffer();
+
+    const storage = getStorage();
+    // 処理済みの画像をアップロード
+    const fileUrl = await storage.uploadAvatarBuffer(processedImageBuffer, file.type);
+    console.log('Generated file URL:', fileUrl);  // デバッグログを追加
 
     // ユーザーのimage URLを更新
     await prisma.user.update({
       where: { email: session.user.email },
-      data: { image: dataUrl },
+      data: { image: fileUrl },
     });
 
-    return NextResponse.json({ url: dataUrl });
+    return NextResponse.json({ url: fileUrl });
   } catch (error) {
     console.error('Upload error:', error);
     return new NextResponse('Internal error', { status: 500 });

@@ -82,14 +82,6 @@ export async function POST(
     // プラットフォーム手数料を計算
     const platformFee = Math.floor(requestData.amount * PLATFORM_FEE_PERCENTAGE);
 
-    // 支払い処理前にステータスを更新
-    await prisma.request.update({
-      where: { id: requestId },
-      data: {
-        status: RequestStatus.COMPLETED
-      }
-    });
-
     // Stripe支払いセッションを作成
     const stripeSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -107,7 +99,7 @@ export async function POST(
         }
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXTAUTH_URL}/requests/${requestData.id}?payment=success`,
+      success_url: `${process.env.NEXTAUTH_URL}/requests/${requestData.id}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXTAUTH_URL}/requests/${requestData.id}?payment=cancel`,
       payment_intent_data: {
         application_fee_amount: platformFee,

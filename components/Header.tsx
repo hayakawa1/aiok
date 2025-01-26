@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signIn, signOut } from 'next-auth/react'
@@ -8,6 +8,8 @@ import { useSession, signIn, signOut } from 'next-auth/react'
 export function Header() {
   const { data: session } = useSession()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  console.log('Session user image:', session?.user?.image);  // デバッグログを追加
 
   return (
     <header className="bg-white shadow">
@@ -51,14 +53,31 @@ export function Header() {
                   ログアウト
                 </button>
                 <Link href="/profile" className="flex items-center space-x-2">
-                  {session.user?.image ? (
-                    <Image
-                      src={session.user.image}
-                      alt="Profile"
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
+                  {session.user?.image && typeof session.user.image === 'string' ? (
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                      {session.user.image.startsWith('http') ? (
+                        <Image
+                          src={session.user.image}
+                          alt="Profile"
+                          fill
+                          className="object-cover"
+                          sizes="32px"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.onerror = null;
+                            target.src = '/images/default-avatar.svg';
+                          }}
+                        />
+                      ) : (
+                        <Image
+                          src="/images/default-avatar.svg"
+                          alt="Profile"
+                          fill
+                          className="object-cover"
+                          sizes="32px"
+                        />
+                      )}
+                    </div>
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gray-200" />
                   )}

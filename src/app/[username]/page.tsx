@@ -137,11 +137,9 @@ export default function UserProfilePage({ params }: { params: { username: string
         },
         body: JSON.stringify({
           receiver_id: user.id,
-          title: title,
-          description: description,
-          amount: selectedPlan.amount,
-          plan_title: selectedPlan.title,
-          plan_description: selectedPlan.description
+          title,
+          description,
+          amount: selectedPlan.amount
         }),
       });
 
@@ -184,20 +182,23 @@ export default function UserProfilePage({ params }: { params: { username: string
       <div className="max-w-3xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6">
-            <div className="flex items-center gap-4 mb-6">
-              <Image
-                src={user.image || '/images/default-avatar.svg'}
-                alt={user.name || user.username || ''}
-                width={80}
-                height={80}
-                className="rounded-full"
-              />
-              <div>
+            <div className="flex flex-col items-center mb-8">
+              <div className="relative aspect-square w-48 rounded-full overflow-hidden mb-6">
+                <Image
+                  src={user.image || '/images/default-avatar.svg'}
+                  alt={user.name || user.username || ''}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 192px, 192px"
+                  priority
+                />
+              </div>
+              <div className="text-center">
                 <h1 className="text-2xl font-bold text-gray-900">
                   {user.name || user.username}
                 </h1>
                 {user.bio && (
-                  <p className="mt-2 text-gray-600">{user.bio}</p>
+                  <p className="mt-4 text-gray-600 whitespace-pre-wrap">{user.bio}</p>
                 )}
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import JSZip from 'jszip';
 
@@ -150,6 +150,42 @@ export class Storage {
     } catch (error) {
       console.error('Error uploading delivery:', error);
       throw new Error('納品物のアップロードに失敗しました');
+    }
+  }
+
+  async uploadAvatarBuffer(buffer: Buffer, contentType: string): Promise<string> {
+    try {
+      const timestamp = new Date().getTime();
+      const ext = contentType.split('/')[1];
+      const key = `avatars/${timestamp}-${Math.random().toString(36).substring(7)}.${ext}`;
+
+      console.log('Uploading avatar with key:', key);
+      console.log('R2_PUBLIC_URL:', process.env.R2_PUBLIC_URL);
+
+      const upload = new Upload({
+        client: this.client,
+        params: {
+          Bucket: this.bucket,
+          Key: key,
+          Body: buffer,
+          ContentType: contentType,
+          ACL: 'public-read'
+        }
+      });
+
+      await upload.done();
+      
+      if (!process.env.R2_PUBLIC_URL) {
+        console.error('R2_PUBLIC_URL is not configured');
+        throw new Error('R2_PUBLIC_URL is not configured');
+      }
+      
+      const fileUrl = `${process.env.R2_PUBLIC_URL}/${key}`;
+      console.log('Generated URL:', fileUrl);
+      return fileUrl;
+    } catch (error) {
+      console.error('Error uploading avatar buffer:', error);
+      throw new Error('アバターのアップロードに失敗しました');
     }
   }
 

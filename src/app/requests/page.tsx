@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { RequestStatus, RequestStatusColor, RequestStatusText, Request, RequestFile } from '@/types/request';
+import { RequestStatus, RequestStatusColor, RequestStatusLabel, Request, RequestFile } from '@/types/request';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
@@ -140,7 +140,7 @@ export default function RequestsPage() {
                       <p className="text-lg font-bold">¥{request.amount?.toLocaleString() || 0}</p>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm ${RequestStatusColor[request.status as RequestStatus]}`}>
-                      {RequestStatusText[request.status as RequestStatus]}
+                      {RequestStatusLabel[request.status as RequestStatus]}
                     </span>
                   </div>
                 </div>

@@ -84,37 +84,6 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
     }
   };
 
-  const handleComplete = async () => {
-    if (!request) {
-      toast.error('依頼情報が見つかりません');
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/requests/${request.id}/pay`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        console.error('支払い処理エラー詳細:', data);
-        toast.error(data.error || '支払い処理の開始に失敗しました');
-        return;
-      }
-
-      const { paymentUrl } = await response.json();
-      if (paymentUrl) {
-        window.location.href = paymentUrl;
-      }
-    } catch (error) {
-      console.error('支払い処理エラー:', error);
-      toast.error('支払い処理の開始に失敗しました');
-    }
-  };
-
   const handlePay = async () => {
     if (!confirm('この依頼の支払い処理を開始しますか？')) return;
     setProcessing(true);
@@ -312,16 +281,6 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
         )}
 
         {isSender && request.status === RequestStatus.DELIVERED && (
-          <button
-            onClick={handleComplete}
-            disabled={processing}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
-          >
-            完了にする
-          </button>
-        )}
-
-        {isSender && request.status === RequestStatus.COMPLETED && (
           <button
             onClick={handlePay}
             disabled={processing}

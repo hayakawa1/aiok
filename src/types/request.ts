@@ -1,25 +1,17 @@
 export enum RequestStatus {
-  PENDING = 'PENDING',      // 受付中
-  ACCEPTED = 'ACCEPTED',    // 承諾済み
+  PENDING = 'PENDING',      // 承認待ち
+  ACCEPTED = 'ACCEPTED',    // 承認済み
   REJECTED = 'REJECTED',    // 拒否
-  DELIVERED = 'DELIVERED',  // 配信済み
-  COMPLETED = 'COMPLETED'   // 完了（ファイルアップロード済み）
+  DELIVERED = 'DELIVERED',  // 納品済み
+  COMPLETED = 'COMPLETED'   // 支払い済み
 }
 
 export const RequestStatusLabel: Record<RequestStatus, string> = {
-  [RequestStatus.PENDING]: '依頼中',
-  [RequestStatus.ACCEPTED]: '承諾済み',
-  [RequestStatus.REJECTED]: '拒否済み',
+  [RequestStatus.PENDING]: '承認待ち',
+  [RequestStatus.ACCEPTED]: '承認済み',
+  [RequestStatus.REJECTED]: '拒否',
   [RequestStatus.DELIVERED]: '納品済み',
-  [RequestStatus.COMPLETED]: '完了'
-}
-
-export const RequestStatusText: Record<RequestStatus, string> = {
-  [RequestStatus.PENDING]: '受付中',
-  [RequestStatus.ACCEPTED]: '承諾済み',
-  [RequestStatus.REJECTED]: '拒否済み',
-  [RequestStatus.DELIVERED]: '納品済み',
-  [RequestStatus.COMPLETED]: '完了'
+  [RequestStatus.COMPLETED]: '支払い済み'
 }
 
 export const RequestStatusColor: Record<RequestStatus, string> = {

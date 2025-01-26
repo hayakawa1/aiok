@@ -1,5 +1,5 @@
 # プロジェクトエクスポート（/src/appフォルダ）
-# 作成日時: 2025-01-26 10:08:15
+# 作成日時: 2025-01-26 10:57:07
 
 
 ================================================================================
@@ -8,7 +8,7 @@
 
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { Providers } from './providers'
@@ -864,7 +864,7 @@ export default function SignIn() {
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { RequestStatus, RequestStatusColor, RequestStatusText, Request, RequestFile } from '@/types/request';
+import { RequestStatus, RequestStatusColor, RequestStatusLabel, Request, RequestFile } from '@/types/request';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
@@ -1001,7 +1001,7 @@ export default function RequestsPage() {
                       <p className="text-lg font-bold">¥{request.amount?.toLocaleString() || 0}</p>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm ${RequestStatusColor[request.status as RequestStatus]}`}>
-                      {RequestStatusText[request.status as RequestStatus]}
+                      {RequestStatusLabel[request.status as RequestStatus]}
                     </span>
                   </div>
                 </div>
@@ -1061,19 +1061,29 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    fetchRequest();
-  }, [params.id]);
+    if (params.id && session?.user) {
+      console.log('Initializing with:', { id: params.id, user: session.user });
+      fetchRequest();
+    }
+  }, [params.id, session]);
 
   const fetchRequest = async () => {
     try {
+      console.log('Fetching request:', params.id);
       const response = await fetch(`/api/requests/${params.id}`);
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
         const data = await response.json();
+        console.error('Error response:', data);
         throw new Error(data.error || '依頼の取得に失敗しました');
       }
+
       const data = await response.json();
+      console.log('Request data:', data);
       setRequest(data);
     } catch (error) {
+      console.error('Fetch error:', error);
       setError(error instanceof Error ? error.message : '依頼の取得に失敗しました');
     } finally {
       setIsLoading(false);
@@ -1118,25 +1128,6 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
     }
   };
 
-  const handleComplete = async () => {
-    if (!confirm('この依頼を完了としてマークしますか？')) return;
-    setProcessing(true);
-    try {
-      const response = await fetch(`/api/requests/${params.id}/complete`, {
-        method: 'POST'
-      });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || '依頼の完了処理に失敗しました');
-      }
-      await fetchRequest();
-    } catch (error) {
-      setError(error instanceof Error ? error.message : '依頼の完了処理に失敗しました');
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   const handlePay = async () => {
     if (!confirm('この依頼の支払い処理を開始しますか？')) return;
     setProcessing(true);
@@ -1159,15 +1150,19 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
   };
 
   const handleUploadComplete = async (files: RequestFile[], status: RequestStatus) => {
+    console.log('Upload complete:', { files, status });
     if (request) {
-      setRequest({
+      const updatedRequest = {
         ...request,
-        status,
-        files: [...(request.files || []), ...files]
-      });
+        status: status,
+        files: [...request.files, ...files]
+      };
+      setRequest(updatedRequest);
       toast.success('ファイルのアップロードが完了しました');
+      // リクエストの状態を更新するために再取得
+      await fetchRequest();
     }
-  }
+  };
 
   if (isLoading) {
     return <div className="p-4">読み込み中...</div>;
@@ -1181,8 +1176,19 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
     return <div className="p-4">依頼が見つかりません</div>;
   }
 
-  const isReceiver = session?.user?.email && request.receiver.id === session.user.id;
-  const isSender = session?.user?.email && request.sender.id === session.user.id;
+  const isReceiver = session?.user?.name === request.receiver.name;
+  const isSender = session?.user?.name === request.sender.name;
+
+  // デバッグ情報をここで出力
+  console.log('Debug Info:', {
+    requestStatus: request.status,
+    receiverName: request.receiver.name,
+    sessionUserName: session?.user?.name,
+    isReceiver,
+    isSender,
+    sessionUser: session?.user,
+    receiver: request.receiver,
+  });
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-8">
@@ -1239,12 +1245,32 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
         <div>
           <h2 className="text-lg font-semibold mb-4">添付ファイル</h2>
           <div className="space-y-4">
-            {request.status === RequestStatus.ACCEPTED && (
-              <FileUploader
-                requestId={request.id}
-                isReceiver={request.receiverId === session?.user?.id}
-                onUploadComplete={handleUploadComplete}
-              />
+            {/* Debug info */}
+            <div className="hidden">
+              {JSON.stringify({
+                status: request.status,
+                isAccepted: request.status === RequestStatus.ACCEPTED,
+                isDelivered: request.status === RequestStatus.DELIVERED,
+                receiverId: request.receiverId,
+                sessionUserId: session?.user?.id,
+                isReceiver: request.receiverId === session?.user?.id
+              })}
+            </div>
+            {isReceiver && [RequestStatus.ACCEPTED, RequestStatus.DELIVERED].includes(request.status) && (
+              <>
+                {console.log('FileUploader条件:', {
+                  isReceiver,
+                  receiverName: request.receiver.name,
+                  sessionName: session?.user?.name,
+                  statusCheck: [RequestStatus.ACCEPTED, RequestStatus.DELIVERED].includes(request.status),
+                  currentStatus: request.status
+                })}
+                <FileUploader
+                  requestId={request.id}
+                  isReceiver={true}
+                  onUploadComplete={handleUploadComplete}
+                />
+              </>
             )}
             {request.files.length > 0 && (
               <div className="grid grid-cols-4 md:grid-cols-6 gap-2 mt-4">
@@ -1299,16 +1325,6 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
         )}
 
         {isSender && request.status === RequestStatus.DELIVERED && (
-          <button
-            onClick={handleComplete}
-            disabled={processing}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
-          >
-            完了にする
-          </button>
-        )}
-
-        {isSender && request.status === RequestStatus.COMPLETED && (
           <button
             onClick={handlePay}
             disabled={processing}
@@ -1586,14 +1602,6 @@ export function Navigation({ session }: NavigationProps) {
               AIOK
             </Link>
           </div>
-          
-          <div className="hidden md:ml-8 md:flex md:space-x-4">
-            <Link href="/search" 
-              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors">
-              <span className="material-symbols-outlined mr-2">search</span>
-              探す
-            </Link>
-          </div>
         </div>
         
         <div className="flex items-center gap-4">
@@ -1655,33 +1663,6 @@ export function Navigation({ session }: NavigationProps) {
                 </div>
               )}
             </div>
-          ) : (
-            <Link href="/api/auth/signin"
-              className="nav-link nav-link-inactive">
-              <span className="material-symbols-outlined">login</span>
-              Googleでログイン
-            </Link>
-          )}
-        </div>
-      </div>
-      
-      {/* モバイルメニュー */}
-      <div className={`md:hidden ${isMobileMenuOpen ? '' : 'hidden'}`}>
-        <div className="px-2 pt-2 pb-3 space-y-1">
-          <Link href="/search" 
-            className="nav-link">
-            <span className="material-symbols-outlined">search</span>
-            探す
-          </Link>
-          
-          {session?.user ? (
-            <>
-              <Link href="/requests" 
-                className="nav-link">
-                <span className="material-symbols-outlined">history</span>
-                依頼履歴
-              </Link>
-            </>
           ) : (
             <Link href="/api/auth/signin"
               className="nav-link nav-link-inactive">
@@ -1890,8 +1871,8 @@ export default function ProfilePage() {
 ================================================================================
 
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function GET() {
@@ -2098,8 +2079,8 @@ export { handler as GET, handler as POST };
 ファイル: src/app/api/requests/route.ts
 ================================================================================
 
+import { getServerSession } from 'next-auth/next'
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { validateText, validateAmount } from '@/lib/validation'
@@ -2509,12 +2490,25 @@ export async function POST(
       return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
     }
 
+    console.log('支払い処理デバッグ情報:', {
+      requestId,
+      status: requestData.status,
+      senderId: requestData.senderId,
+      currentUserId: user.id,
+      receiverStripeAccount: requestData.receiver.stripeConnectAccountId,
+      isCorrectSender: requestData.senderId === user.id,
+      isDelivered: requestData.status === RequestStatus.DELIVERED
+    });
+
     if (requestData.senderId !== user.id) {
       return NextResponse.json({ error: '権限がありません' }, { status: 403 });
     }
 
     if (requestData.status !== RequestStatus.DELIVERED) {
-      return NextResponse.json({ error: '納品済みの依頼のみ支払いできます' }, { status: 400 });
+      return NextResponse.json({ 
+        error: '納品済みの依頼のみ支払いできます',
+        currentStatus: requestData.status
+      }, { status: 400 });
     }
 
     if (!requestData.receiver.stripeConnectAccountId) {
@@ -2574,154 +2568,11 @@ export async function POST(
 } 
 
 ================================================================================
-ファイル: src/app/api/requests/[id]/deliver/route.ts
-================================================================================
-
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { getStorage } from '@/lib/storage';
-import { validateUrl } from '@/lib/validation';
-import { RequestStatus } from '@/types/request';
-
-type RequestContext = {
-  params: {
-    id: string;
-  };
-};
-
-export async function POST(
-  req: NextRequest,
-  { params }: RequestContext
-): Promise<NextResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
-    }
-
-    const requestId = Number(params.id);
-    if (isNaN(requestId)) {
-      return NextResponse.json({ error: '無効なリクエストIDです' }, { status: 400 });
-    }
-
-    const request = await prisma.request.findUnique({
-      where: { id: requestId },
-      include: {
-        sender: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
-            image: true
-          }
-        },
-        receiver: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
-            image: true
-          }
-        }
-      }
-    });
-
-    if (!request) {
-      return NextResponse.json({ error: 'リクエストが見つかりません' }, { status: 404 });
-    }
-
-    if (request.receiverId !== session.user.id) {
-      return NextResponse.json({ error: '権限がありません' }, { status: 403 });
-    }
-
-    if (request.status !== RequestStatus.ACCEPTED) {
-      return NextResponse.json({ error: 'このリクエストは納品できません' }, { status: 400 });
-    }
-
-    const formData = await req.formData();
-    const deliveryType = formData.get('delivery_type')?.toString();
-    const deliveryComment = formData.get('delivery_comment')?.toString();
-
-    let filePath: string | null = null;
-    let deliveryUrl: string | null = null;
-
-    if (deliveryType === 'file') {
-      const file = formData.get('file') as File;
-      if (!file) {
-        return NextResponse.json({ error: 'ファイルが必要です' }, { status: 400 });
-      }
-
-      const storage = getStorage();
-      filePath = await storage.uploadDelivery(file);
-    } else if (deliveryType === 'url') {
-      const url = formData.get('url')?.toString();
-      if (!url || !validateUrl(url)) {
-        return NextResponse.json({ error: '有効なURLを入力してください' }, { status: 400 });
-      }
-      deliveryUrl = url;
-    }
-
-    const updatedRequest = await prisma.request.update({
-      where: { id: requestId },
-      data: {
-        status: RequestStatus.DELIVERED
-      },
-      include: {
-        sender: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
-            image: true
-          }
-        },
-        receiver: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
-            image: true
-          }
-        }
-      }
-    });
-
-    return NextResponse.json({
-      id: updatedRequest.id,
-      status: updatedRequest.status,
-      title: updatedRequest.title,
-      description: updatedRequest.description,
-      sender: {
-        id: updatedRequest.sender.id,
-        username: updatedRequest.sender.username,
-        display_name: updatedRequest.sender.name,
-        avatar_url: updatedRequest.sender.image
-      },
-      receiver: {
-        id: updatedRequest.receiver.id,
-        username: updatedRequest.receiver.username,
-        display_name: updatedRequest.receiver.name,
-        avatar_url: updatedRequest.receiver.image
-      },
-      created_at: updatedRequest.createdAt
-    });
-  } catch (error) {
-    console.error('Error delivering request:', error);
-    return NextResponse.json({
-      error: 'Internal Server Error',
-      message: '依頼の納品に失敗しました'
-    }, { status: 500 });
-  }
-} 
-
-================================================================================
 ファイル: src/app/api/requests/[id]/upload/route.ts
 ================================================================================
 
+import { getServerSession } from 'next-auth/next'
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getStorage } from '@/lib/storage'
@@ -2845,8 +2696,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 ファイル: src/app/api/users/profile/route.ts
 ================================================================================
 
+import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getStorage } from '@/lib/storage';
@@ -3061,9 +2912,10 @@ export async function GET(
 ================================================================================
 
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { getStorage } from '@/lib/storage';
 
 export async function POST(request: Request) {
   try {
@@ -3078,23 +2930,16 @@ export async function POST(request: Request) {
       return new NextResponse('No file uploaded', { status: 400 });
     }
 
-    // TODO: ここで実際の画像アップロード処理を実装
-    // 例: AWS S3やCloudinaryなどのサービスを使用
-
-    // 仮の実装として、Base64エンコードした画像URLを返す
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const base64 = buffer.toString('base64');
-    const mimeType = file.type;
-    const dataUrl = `data:${mimeType};base64,${base64}`;
+    const storage = getStorage();
+    const fileUrl = await storage.uploadAvatar(file);
 
     // ユーザーのimage URLを更新
     await prisma.user.update({
       where: { email: session.user.email },
-      data: { image: dataUrl },
+      data: { image: fileUrl },
     });
 
-    return NextResponse.json({ url: dataUrl });
+    return NextResponse.json({ url: fileUrl });
   } catch (error) {
     console.error('Upload error:', error);
     return new NextResponse('Internal error', { status: 500 });
@@ -3105,8 +2950,8 @@ export async function POST(request: Request) {
 ファイル: src/app/api/stripe/settings/route.ts
 ================================================================================
 
+import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import Stripe from 'stripe';
@@ -3159,8 +3004,8 @@ export async function GET() {
 ファイル: src/app/api/stripe/connect/route.ts
 ================================================================================
 
+import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import Stripe from 'stripe';
@@ -3366,11 +3211,9 @@ export default function UserProfilePage({ params }: { params: { username: string
         },
         body: JSON.stringify({
           receiver_id: user.id,
-          title: title,
-          description: description,
-          amount: selectedPlan.amount,
-          plan_title: selectedPlan.title,
-          plan_description: selectedPlan.description
+          title,
+          description,
+          amount: selectedPlan.amount
         }),
       });
 
