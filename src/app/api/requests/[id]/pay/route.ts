@@ -54,12 +54,25 @@ export async function POST(
       return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
     }
 
+    console.log('支払い処理デバッグ情報:', {
+      requestId,
+      status: requestData.status,
+      senderId: requestData.senderId,
+      currentUserId: user.id,
+      receiverStripeAccount: requestData.receiver.stripeConnectAccountId,
+      isCorrectSender: requestData.senderId === user.id,
+      isDelivered: requestData.status === RequestStatus.DELIVERED
+    });
+
     if (requestData.senderId !== user.id) {
       return NextResponse.json({ error: '権限がありません' }, { status: 403 });
     }
 
     if (requestData.status !== RequestStatus.DELIVERED) {
-      return NextResponse.json({ error: '納品済みの依頼のみ支払いできます' }, { status: 400 });
+      return NextResponse.json({ 
+        error: '納品済みの依頼のみ支払いできます',
+        currentStatus: requestData.status
+      }, { status: 400 });
     }
 
     if (!requestData.receiver.stripeConnectAccountId) {

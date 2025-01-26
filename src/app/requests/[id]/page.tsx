@@ -85,21 +85,33 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
   };
 
   const handleComplete = async () => {
-    if (!confirm('この依頼を完了としてマークしますか？')) return;
-    setProcessing(true);
+    if (!request) {
+      toast.error('依頼情報が見つかりません');
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/requests/${params.id}/complete`, {
-        method: 'POST'
+      const response = await fetch(`/api/requests/${request.id}/pay`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || '依頼の完了処理に失敗しました');
+        console.error('支払い処理エラー詳細:', data);
+        toast.error(data.error || '支払い処理の開始に失敗しました');
+        return;
       }
-      await fetchRequest();
+
+      const { paymentUrl } = await response.json();
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      }
     } catch (error) {
-      setError(error instanceof Error ? error.message : '依頼の完了処理に失敗しました');
-    } finally {
-      setProcessing(false);
+      console.error('支払い処理エラー:', error);
+      toast.error('支払い処理の開始に失敗しました');
     }
   };
 
