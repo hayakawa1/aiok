@@ -1,5 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pub-c43a87ca71904e19971c3defec24c598.r2.dev',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -10,20 +26,7 @@ const nextConfig = {
     }
     return config
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-        pathname: '/a/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pub-c43a87ca71904e19971c3defec24c598.r2.dev',
-        pathname: '/**',
-      },
-    ],
-  },
+  reactStrictMode: true,
 }
 
 module.exports = nextConfig 

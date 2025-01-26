@@ -1,9 +1,9 @@
-# プロジェクトエクスポート（/appフォルダ）
-# 作成日時: 2025-01-26 05:12:24
+# プロジェクトエクスポート（/src/appフォルダ）
+# 作成日時: 2025-01-26 10:08:15
 
 
 ================================================================================
-ファイル: app/layout.tsx
+ファイル: src/app/layout.tsx
 ================================================================================
 
 import './globals.css'
@@ -16,6 +16,7 @@ import { Navigation } from './components/Navigation'
 import type { ReactNode } from 'react'
 import React from 'react'
 import type { Metadata } from "next";
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,7 +25,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'AIOK',
-  description: 'AIOKなクリエイターと依頼者をつなぐプラットフォーム',
+  description: 'AIを活用したプロフェッショナルのためのプラットフォーム',
 }
 
 export default async function RootLayout({
@@ -33,8 +34,6 @@ export default async function RootLayout({
   children: ReactNode
 }) {
   const session = await getServerSession(authOptions)
-  const headersList = headers()
-  const pathname = headersList.get('x-pathname') || '/'
 
   return (
     <html lang="ja" className={inter.className}>
@@ -43,32 +42,35 @@ export default async function RootLayout({
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" />
       </head>
-      <body>
+      <body className="bg-gray-50">
         <Providers session={session}>
-          <nav className="bg-white shadow-material sticky top-0 z-50">
-            <Navigation />
-          </nav>
-
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </main>
-
-          <footer className="bg-gray-50 mt-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-                <div className="flex items-center gap-4">
-                  <a href="/terms" className="hover:text-gray-700">利用規約</a>
-                  <a href="/commerce" className="hover:text-gray-700">特定商取引法に基づく表記</a>
-                  <a href="/guidelines" className="hover:text-gray-700">ガイドライン</a>
-                  <a href="/privacy" className="hover:text-gray-700">プライバシーポリシー</a>
-                  <a href="/copyright" className="hover:text-gray-700">著作権・権利帰属</a>
-                </div>
-                <div className="text-gray-400">
-                  &copy; 2024 AIOK All rights reserved.
+          <div className="min-h-screen flex flex-col">
+            <nav className="bg-white border-b border-gray-200">
+              <Navigation session={session} />
+            </nav>
+            <main className="flex-1 w-full py-8">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {children}
+              </div>
+            </main>
+            <footer className="bg-white border-t border-gray-200 mt-auto">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+                  <div className="flex flex-wrap justify-center md:justify-start items-center gap-4">
+                    <a href="/terms" className="hover:text-gray-700">利用規約</a>
+                    <a href="/commerce" className="hover:text-gray-700">特定商取引法に基づく表記</a>
+                    <a href="/guidelines" className="hover:text-gray-700">ガイドライン</a>
+                    <a href="/privacy" className="hover:text-gray-700">プライバシーポリシー</a>
+                    <a href="/copyright" className="hover:text-gray-700">著作権・権利帰属</a>
+                  </div>
+                  <div className="text-gray-400">
+                    &copy; 2024 AIOK All rights reserved.
+                  </div>
                 </div>
               </div>
-            </div>
-          </footer>
+            </footer>
+          </div>
+          <Toaster />
         </Providers>
       </body>
     </html>
@@ -76,7 +78,7 @@ export default async function RootLayout({
 } 
 
 ================================================================================
-ファイル: app/page.tsx
+ファイル: src/app/page.tsx
 ================================================================================
 
 'use client';
@@ -207,13 +209,13 @@ export default function HomePage() {
 } 
 
 ================================================================================
-ファイル: app/globals.css
+ファイル: src/app/globals.css
 ================================================================================
 
 [CSSファイル - 内容は省略]
 
 ================================================================================
-ファイル: app/providers.tsx
+ファイル: src/app/providers.tsx
 ================================================================================
 
 'use client'
@@ -238,7 +240,7 @@ export function Providers({
 } 
 
 ================================================================================
-ファイル: app/settings/page.tsx
+ファイル: src/app/settings/page.tsx
 ================================================================================
 
 'use client';
@@ -385,7 +387,7 @@ export default function SettingsPage() {
 } 
 
 ================================================================================
-ファイル: app/types/next-auth.d.ts
+ファイル: src/app/types/next-auth.d.ts
 ================================================================================
 
 import 'next-auth';
@@ -410,63 +412,7 @@ declare module 'next-auth/jwt' {
 } 
 
 ================================================================================
-ファイル: app/types/request.ts
-================================================================================
-
-export enum RequestStatus {
-  PENDING = 'PENDING',      // 受付中
-  ACCEPTED = 'ACCEPTED',    // 承諾済み
-  REJECTED = 'REJECTED',    // 拒否
-  DELIVERED = 'DELIVERED',  // 配信済み
-  COMPLETED = 'COMPLETED'   // 完了（ファイルアップロード済み）
-}
-
-export const RequestStatusText: Record<RequestStatus, string> = {
-  [RequestStatus.PENDING]: '受付中',
-  [RequestStatus.ACCEPTED]: '承諾済み',
-  [RequestStatus.REJECTED]: '拒否済み',
-  [RequestStatus.DELIVERED]: '配信済み',
-  [RequestStatus.COMPLETED]: '完了済み'
-}
-
-export const RequestStatusColor: Record<RequestStatus, string> = {
-  [RequestStatus.PENDING]: 'bg-yellow-100 text-yellow-800',
-  [RequestStatus.ACCEPTED]: 'bg-blue-100 text-blue-800',
-  [RequestStatus.REJECTED]: 'bg-red-100 text-red-800',
-  [RequestStatus.DELIVERED]: 'bg-green-100 text-green-800',
-  [RequestStatus.COMPLETED]: 'bg-purple-100 text-purple-800'
-}
-
-export interface RequestFile {
-  id: number;
-  fileName: string;
-  fileUrl: string;
-}
-
-export interface Request {
-  id: number;
-  title: string;
-  description: string;
-  amount: number;
-  status: RequestStatus;
-  sender: {
-    id: string;
-    username: string;
-    name: string;
-    image: string;
-  };
-  receiver: {
-    id: string;
-    username: string;
-    name: string;
-    image: string;
-  };
-  files: RequestFile[];
-  created_at: string;
-} 
-
-================================================================================
-ファイル: app/price-plans/page.tsx
+ファイル: src/app/price-plans/page.tsx
 ================================================================================
 
 'use client';
@@ -746,7 +692,7 @@ export default function PricePlansPage() {
 } 
 
 ================================================================================
-ファイル: app/price-plans/create/page.tsx
+ファイル: src/app/price-plans/create/page.tsx
 ================================================================================
 
 'use client';
@@ -869,7 +815,7 @@ export default function CreatePricePlanPage() {
 } 
 
 ================================================================================
-ファイル: app/auth/signin/page.tsx
+ファイル: src/app/auth/signin/page.tsx
 ================================================================================
 
 'use client';
@@ -910,7 +856,7 @@ export default function SignIn() {
 } 
 
 ================================================================================
-ファイル: app/requests/page.tsx
+ファイル: src/app/requests/page.tsx
 ================================================================================
 
 'use client';
@@ -918,7 +864,7 @@ export default function SignIn() {
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { RequestStatus, RequestStatusColor, RequestStatusText, Request, RequestFile } from '@/app/types/request';
+import { RequestStatus, RequestStatusColor, RequestStatusText, Request, RequestFile } from '@/types/request';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
@@ -1093,7 +1039,7 @@ export default function RequestsPage() {
 } 
 
 ================================================================================
-ファイル: app/requests/[id]/page.tsx
+ファイル: src/app/requests/[id]/page.tsx
 ================================================================================
 
 'use client';
@@ -1101,9 +1047,9 @@ export default function RequestsPage() {
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Request as RequestType, RequestStatus, RequestFile } from '@/app/types/request';
+import { Request as RequestType, RequestStatus, RequestFile, RequestStatusLabel } from '@/types/request';
 import Image from 'next/image';
-import FileUploader from '../../components/FileUploader';
+import FileUploader from '@/app/components/FileUploader';
 import { toast } from 'react-hot-toast';
 
 export default function RequestDetailPage({ params }: { params: { id: string } }) {
@@ -1286,30 +1232,45 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-2">ステータス</h2>
           <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-            {request.status}
+            {RequestStatusLabel[request.status]}
           </span>
         </div>
 
         <div>
           <h2 className="text-lg font-semibold mb-4">添付ファイル</h2>
           <div className="space-y-4">
-            <FileUploader
-              requestId={request.id}
-              isReceiver={request.receiverId === session?.user?.id}
-              onUploadComplete={handleUploadComplete}
-            />
+            {request.status === RequestStatus.ACCEPTED && (
+              <FileUploader
+                requestId={request.id}
+                isReceiver={request.receiverId === session?.user?.id}
+                onUploadComplete={handleUploadComplete}
+              />
+            )}
             {request.files.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-4 md:grid-cols-6 gap-2 mt-4">
                 {request.files.map((file) => (
-                  <div key={file.id} className="relative aspect-square">
-                    <Image
-                      src={file.fileUrl}
-                      alt={file.fileName}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover rounded-lg"
-                    />
-                  </div>
+                  <a 
+                    key={file.id} 
+                    href={file.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <div className="relative aspect-square bg-gray-100 hover:bg-gray-200 transition-colors rounded-md">
+                      <div className="absolute inset-0 m-auto w-1/2 h-1/2">
+                        <Image
+                          src="/upload-icon.svg"
+                          alt={file.fileName}
+                          fill
+                          sizes="(max-width: 768px) 25vw, 16.666vw"
+                          className="object-contain p-2"
+                        />
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-1 text-xs truncate rounded-b-md">
+                        {file.fileName}
+                      </div>
+                    </div>
+                  </a>
                 ))}
               </div>
             )}
@@ -1337,7 +1298,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
           </>
         )}
 
-        {isReceiver && request.status === RequestStatus.ACCEPTED && (
+        {isSender && request.status === RequestStatus.DELIVERED && (
           <button
             onClick={handleComplete}
             disabled={processing}
@@ -1362,7 +1323,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
 } 
 
 ================================================================================
-ファイル: app/requests/[id]/payment/page.tsx
+ファイル: src/app/requests/[id]/payment/page.tsx
 ================================================================================
 
 'use client';
@@ -1469,14 +1430,14 @@ export default function PaymentPage() {
 } 
 
 ================================================================================
-ファイル: app/components/FileUploader.tsx
+ファイル: src/app/components/FileUploader.tsx
 ================================================================================
 
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
-import { RequestStatus } from '@/app/types/request'
+import { RequestStatus } from '@/types/request'
 
 interface FileUploaderProps {
   requestId: number
@@ -1562,7 +1523,7 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
 } 
 
 ================================================================================
-ファイル: app/components/Navigation.tsx
+ファイル: src/app/components/Navigation.tsx
 ================================================================================
 
 'use client'
@@ -1572,13 +1533,29 @@ import { useState, useEffect } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Session } from 'next-auth'
 
-export function Navigation() {
-  const { data: session } = useSession()
+interface NavigationProps {
+  session: Session | null
+}
+
+export function Navigation({ session }: NavigationProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [username, setUsername] = useState<string | null>(null)
   const [userImage, setUserImage] = useState<string | null>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-menu-container]')) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -1604,16 +1581,16 @@ export function Navigation() {
       <div className="flex justify-between h-16">
         <div className="flex items-center">
           <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-bold text-primary flex items-center gap-2">
+            <Link href="/" className="text-xl font-bold text-blue-600 flex items-center gap-2">
               <span className="material-symbols-outlined">diversity_3</span>
               AIOK
             </Link>
           </div>
           
-          <div className="hidden md:ml-8 md:flex md:space-x-2">
+          <div className="hidden md:ml-8 md:flex md:space-x-4">
             <Link href="/search" 
-              className="nav-link">
-              <span className="material-symbols-outlined">search</span>
+              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors">
+              <span className="material-symbols-outlined mr-2">search</span>
               探す
             </Link>
           </div>
@@ -1623,8 +1600,12 @@ export function Navigation() {
           {session?.user ? (
             <div className="relative">
               <button type="button" 
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-800">
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsUserMenuOpen(!isUserMenuOpen);
+                }}
+                data-menu-container
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 p-2 rounded-full hover:bg-gray-50 transition-colors">
                 <Image
                   src={userImage || session.user.image || '/images/default-avatar.svg'}
                   alt="プロフィール画像"
@@ -1636,7 +1617,8 @@ export function Navigation() {
               </button>
               
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+                     data-menu-container>
                   <div className="py-1">
                     <Link href={username ? `/${username}` : '/profile'}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -1714,7 +1696,7 @@ export function Navigation() {
 } 
 
 ================================================================================
-ファイル: app/profile/page.tsx
+ファイル: src/app/profile/page.tsx
 ================================================================================
 
 'use client';
@@ -1904,7 +1886,7 @@ export default function ProfilePage() {
 } 
 
 ================================================================================
-ファイル: app/api/price-plans/route.ts
+ファイル: src/app/api/price-plans/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server';
@@ -1991,7 +1973,7 @@ export async function POST(req: Request) {
 } 
 
 ================================================================================
-ファイル: app/api/price-plans/[id]/route.ts
+ファイル: src/app/api/price-plans/[id]/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server';
@@ -2103,7 +2085,7 @@ export async function DELETE(
 } 
 
 ================================================================================
-ファイル: app/api/auth/[...nextauth]/route.ts
+ファイル: src/app/api/auth/[...nextauth]/route.ts
 ================================================================================
 
 import NextAuth from 'next-auth';
@@ -2113,7 +2095,7 @@ const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST }; 
 
 ================================================================================
-ファイル: app/api/requests/route.ts
+ファイル: src/app/api/requests/route.ts
 ================================================================================
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -2121,7 +2103,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { validateText, validateAmount } from '@/lib/validation'
-import { RequestStatus } from '@/app/types/request'
+import { RequestStatus } from '@/types/request'
 
 export const dynamic = 'force-dynamic'
 
@@ -2255,7 +2237,7 @@ export async function POST(req: NextRequest) {
 } 
 
 ================================================================================
-ファイル: app/api/requests/[id]/route.ts
+ファイル: src/app/api/requests/[id]/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server'
@@ -2346,14 +2328,14 @@ export async function GET(
 } 
 
 ================================================================================
-ファイル: app/api/requests/[id]/accept/route.ts
+ファイル: src/app/api/requests/[id]/accept/route.ts
 ================================================================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { RequestStatus } from '@/app/types/request';
+import { RequestStatus } from '@/types/request';
 
 type RequestContext = {
   params: {
@@ -2410,14 +2392,14 @@ export async function POST(
 } 
 
 ================================================================================
-ファイル: app/api/requests/[id]/reject/route.ts
+ファイル: src/app/api/requests/[id]/reject/route.ts
 ================================================================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { RequestStatus } from '@/app/types/request';
+import { RequestStatus } from '@/types/request';
 
 export const dynamic = 'force-dynamic';
 
@@ -2468,110 +2450,14 @@ export async function POST(
 } 
 
 ================================================================================
-ファイル: app/api/requests/[id]/complete/route.ts
-================================================================================
-
-import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { RequestStatus } from '@/app/types/request';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia'
-});
-
-export const dynamic = 'force-dynamic';
-
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email }
-  });
-  if (!user) {
-    return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
-  }
-
-  try {
-    const requestData = await prisma.request.findUnique({
-      where: { id: parseInt(params.id) },
-      include: {
-        sender: true,
-        receiver: true
-      }
-    });
-
-    if (!requestData) {
-      return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
-    }
-
-    // 依頼の送信者のみが完了できる
-    if (requestData.senderId !== user.id) {
-      return NextResponse.json({ error: '権限がありません' }, { status: 403 });
-    }
-
-    // 依頼のステータスを完了に更新
-    const updatedRequest = await prisma.request.update({
-      where: { id: parseInt(params.id) },
-      data: { status: RequestStatus.COMPLETED }
-    });
-
-    // Stripe支払いセッションを作成
-    const stripeSession = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'jpy',
-            product_data: {
-              name: `リクエスト #${params.id} の支払い`
-            },
-            unit_amount: updatedRequest.amount
-          },
-          quantity: 1
-        }
-      ],
-      mode: 'payment',
-      success_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=success`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=cancel`,
-      payment_intent_data: {
-        metadata: {
-          requestId: params.id,
-          receiverId: updatedRequest.receiverId
-        }
-      }
-    });
-
-    return NextResponse.json({
-      status: updatedRequest.status,
-      paymentUrl: stripeSession.url
-    });
-  } catch (error) {
-    console.error('Error completing request:', error);
-    return NextResponse.json(
-      { error: '依頼の完了処理に失敗しました' },
-      { status: 500 }
-    );
-  }
-} 
-
-================================================================================
-ファイル: app/api/requests/[id]/pay/route.ts
+ファイル: src/app/api/requests/[id]/pay/route.ts
 ================================================================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { RequestStatus } from '@/app/types/request';
+import { RequestStatus } from '@/types/request';
 import Stripe from 'stripe';
 
 type RequestContext = {
@@ -2585,6 +2471,9 @@ export const dynamic = 'force-dynamic';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-12-18.acacia'
 });
+
+// プラットフォーム手数料（10%）
+const PLATFORM_FEE_PERCENTAGE = 0.1;
 
 export async function POST(
   req: NextRequest,
@@ -2620,52 +2509,72 @@ export async function POST(
       return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
     }
 
+    if (requestData.senderId !== user.id) {
+      return NextResponse.json({ error: '権限がありません' }, { status: 403 });
+    }
+
+    if (requestData.status !== RequestStatus.DELIVERED) {
+      return NextResponse.json({ error: '納品済みの依頼のみ支払いできます' }, { status: 400 });
+    }
+
     if (!requestData.receiver.stripeConnectAccountId) {
       return NextResponse.json({ error: '受信者のStripeアカウントが設定されていません' }, { status: 400 });
     }
 
+    // プラットフォーム手数料を計算
+    const platformFee = Math.floor(requestData.amount * PLATFORM_FEE_PERCENTAGE);
+
+    // 支払い処理前にステータスを更新
+    await prisma.request.update({
+      where: { id: requestId },
+      data: {
+        status: RequestStatus.COMPLETED
+      }
+    });
+
     // Stripe支払いセッションを作成
     const stripeSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {
             currency: 'jpy',
             product_data: {
-              name: `リクエスト #${params.id} の支払い`,
+              name: `依頼 #${requestData.id} の支払い`,
+              description: requestData.title
             },
-            unit_amount: requestData.amount,
+            unit_amount: requestData.amount
           },
-          quantity: 1,
-        },
+          quantity: 1
+        }
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=success`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=cancel`,
+      success_url: `${process.env.NEXTAUTH_URL}/requests/${requestData.id}?payment=success`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/requests/${requestData.id}?payment=cancel`,
       payment_intent_data: {
-        application_fee_amount: Math.floor(requestData.amount * 0.1), // 10%の手数料
+        application_fee_amount: platformFee,
         transfer_data: {
-          destination: requestData.receiver.stripeConnectAccountId,
+          destination: requestData.receiver.stripeConnectAccountId
         },
         metadata: {
-          requestId: params.id,
-          senderId: user.id,
-          receiverId: requestData.receiver.id
+          requestId: requestData.id.toString(),
+          receiverId: requestData.receiverId
         }
       }
     });
 
     return NextResponse.json({ paymentUrl: stripeSession.url });
   } catch (error) {
-    console.error('Error in payment API:', error);
+    console.error('Error creating payment session:', error);
     return NextResponse.json(
-      { error: '支払い処理の開始に失敗しました' },
+      { error: '支払いセッションの作成に失敗しました' },
       { status: 500 }
     );
   }
 } 
 
 ================================================================================
-ファイル: app/api/requests/[id]/deliver/route.ts
+ファイル: src/app/api/requests/[id]/deliver/route.ts
 ================================================================================
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -2674,7 +2583,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getStorage } from '@/lib/storage';
 import { validateUrl } from '@/lib/validation';
-import { RequestStatus } from '@/app/types/request';
+import { RequestStatus } from '@/types/request';
 
 type RequestContext = {
   params: {
@@ -2808,7 +2717,7 @@ export async function POST(
 } 
 
 ================================================================================
-ファイル: app/api/requests/[id]/upload/route.ts
+ファイル: src/app/api/requests/[id]/upload/route.ts
 ================================================================================
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -2816,7 +2725,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getStorage } from '@/lib/storage'
-import { RequestStatus } from '@/app/types/request'
+import { RequestStatus } from '@/types/request'
 
 export const dynamic = 'force-dynamic'
 
@@ -2933,7 +2842,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 } 
 
 ================================================================================
-ファイル: app/api/users/profile/route.ts
+ファイル: src/app/api/users/profile/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server';
@@ -3100,7 +3009,7 @@ export async function PUT(request: Request) {
 } 
 
 ================================================================================
-ファイル: app/api/users/[username]/route.ts
+ファイル: src/app/api/users/[username]/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server';
@@ -3148,7 +3057,7 @@ export async function GET(
 } 
 
 ================================================================================
-ファイル: app/api/upload/route.ts
+ファイル: src/app/api/upload/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server';
@@ -3193,7 +3102,7 @@ export async function POST(request: Request) {
 } 
 
 ================================================================================
-ファイル: app/api/stripe/settings/route.ts
+ファイル: src/app/api/stripe/settings/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server';
@@ -3247,7 +3156,7 @@ export async function GET() {
 } 
 
 ================================================================================
-ファイル: app/api/stripe/connect/route.ts
+ファイル: src/app/api/stripe/connect/route.ts
 ================================================================================
 
 import { NextResponse } from 'next/server';
@@ -3315,7 +3224,7 @@ export async function GET() {
 } 
 
 ================================================================================
-ファイル: app/[username]/page.tsx
+ファイル: src/app/[username]/page.tsx
 ================================================================================
 
 'use client';

@@ -5,8 +5,8 @@ from datetime import datetime
 
 def should_include(path):
     """指定されたパスを含めるべきかどうかを判定する"""
-    # appフォルダ配下のみを対象とする
-    return path.startswith('app/')
+    # src/appフォルダ配下のみを対象とする
+    return path.startswith('src/app/')
 
 def read_file_content(file_path):
     """ファイルの内容を読み込む"""
@@ -22,12 +22,12 @@ def read_file_content(file_path):
     except Exception as e:
         return f"[ファイル読み込みエラー: {str(e)}]"
 
-def export_project(start_path='app', output_file='project_export_for_gpt.txt'):
+def export_project(start_path='', output_file='project_export_for_gpt.txt'):
     """プロジェクト内の全ファイルの内容をエクスポートする"""
     
     with open(output_file, 'w', encoding='utf-8') as out:
         # ヘッダー情報を書き込む
-        out.write(f"# プロジェクトエクスポート（/appフォルダ）\n")
+        out.write(f"# プロジェクトエクスポート（/src/appフォルダ）\n")
         out.write(f"# 作成日時: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
         
         for root, dirs, files in os.walk(start_path):
@@ -58,5 +58,5 @@ if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
     output_file = 'project_export_for_gpt.txt'
-    export_project('app', output_file)
+    export_project('.', output_file)
     print(f"プロジェクトの内容を {output_file} にエクスポートしました。") 
