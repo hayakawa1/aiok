@@ -1,0 +1,3567 @@
+# プロジェクトエクスポート（/appフォルダ）
+# 作成日時: 2025-01-26 05:12:24
+
+
+================================================================================
+ファイル: app/layout.tsx
+================================================================================
+
+import './globals.css'
+import { Inter } from 'next/font/google'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { headers } from 'next/headers'
+import { Providers } from './providers'
+import { Navigation } from './components/Navigation'
+import type { ReactNode } from 'react'
+import React from 'react'
+import type { Metadata } from "next";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+})
+
+export const metadata: Metadata = {
+  title: 'AIOK',
+  description: 'AIOKなクリエイターと依頼者をつなぐプラットフォーム',
+}
+
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
+  const session = await getServerSession(authOptions)
+  const headersList = headers()
+  const pathname = headersList.get('x-pathname') || '/'
+
+  return (
+    <html lang="ja" className={inter.className}>
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" />
+      </head>
+      <body>
+        <Providers session={session}>
+          <nav className="bg-white shadow-material sticky top-0 z-50">
+            <Navigation />
+          </nav>
+
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {children}
+          </main>
+
+          <footer className="bg-gray-50 mt-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-4">
+                  <a href="/terms" className="hover:text-gray-700">利用規約</a>
+                  <a href="/commerce" className="hover:text-gray-700">特定商取引法に基づく表記</a>
+                  <a href="/guidelines" className="hover:text-gray-700">ガイドライン</a>
+                  <a href="/privacy" className="hover:text-gray-700">プライバシーポリシー</a>
+                  <a href="/copyright" className="hover:text-gray-700">著作権・権利帰属</a>
+                </div>
+                <div className="text-gray-400">
+                  &copy; 2024 AIOK All rights reserved.
+                </div>
+              </div>
+            </div>
+          </footer>
+        </Providers>
+      </body>
+    </html>
+  )
+} 
+
+================================================================================
+ファイル: app/page.tsx
+================================================================================
+
+'use client';
+
+import React from 'react';
+import Image from 'next/legacy/image';
+import Link from 'next/link';
+
+export default function HomePage() {
+  return (
+    <div className="space-y-12">
+      {/* ヒーローセクション */}
+      <div className="relative h-[600px] overflow-hidden rounded-xl">
+        {/* 背景画像 */}
+        <Image
+          src="/images/hero.webp"
+          alt="AIOK Hero Image"
+          width={1920}
+          height={1080}
+          className="object-cover"
+          priority
+        />
+        {/* オーバーレイ */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/90 to-purple-700/90" />
+        {/* コンテンツ */}
+        <div className="relative h-full flex flex-col items-center justify-center max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+          <p className="text-xl md:text-2xl mb-4 text-indigo-200 font-medium">
+            AIOKなクリエイターマッチングサービス。
+          </p>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+            AIを味方に。<br />「全てを可能」にする<br className="md:hidden" />新しいクリエイティブスタイル
+          </h1>
+          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              href="/requests/new"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 transition-colors"
+            >
+              依頼を作成する
+            </Link>
+            <Link
+              href="/requests"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-200 bg-indigo-900 bg-opacity-50 hover:bg-opacity-70 transition-colors"
+            >
+              依頼を探す
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ナビゲーションメニュー */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white shadow rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+            <Link
+              href="/profile"
+              className="flex items-center justify-center p-4 rounded-lg bg-indigo-50 hover:bg-indigo-100 transition-colors"
+            >
+              <div className="text-center">
+                <h3 className="text-lg font-medium text-indigo-900">プロフィール設定</h3>
+                <p className="mt-1 text-sm text-indigo-700">プロフィールを編集する</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/requests"
+              className="flex items-center justify-center p-4 rounded-lg bg-indigo-50 hover:bg-indigo-100 transition-colors"
+            >
+              <div className="text-center">
+                <h3 className="text-lg font-medium text-indigo-900">依頼一覧</h3>
+                <p className="mt-1 text-sm text-indigo-700">依頼を確認・管理する</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* 特徴セクション */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900">
+            AIOKの特徴
+          </h2>
+          <p className="mt-4 text-lg text-gray-600">
+            AIを活用したクリエイティブな依頼マッチングプラットフォーム
+          </p>
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {/* 特徴カード1 */}
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg font-medium text-gray-900">
+                AIによる最適なマッチング
+              </h3>
+              <p className="mt-2 text-base text-gray-500">
+                AIがクリエイターのスキルと依頼内容を分析し、最適なマッチングを提案します。
+              </p>
+            </div>
+          </div>
+
+          {/* 特徴カード2 */}
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg font-medium text-gray-900">
+                安心の取引システム
+              </h3>
+              <p className="mt-2 text-base text-gray-500">
+                エスクロー決済で安全な取引を実現。作品の品質を確認してから支払いが完了します。
+              </p>
+            </div>
+          </div>
+
+          {/* 特徴カード3 */}
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg font-medium text-gray-900">
+                多彩なクリエイター
+              </h3>
+              <p className="mt-2 text-base text-gray-500">
+                イラスト、動画編集、ウェブデザインなど、様々なジャンルのクリエイターが参加しています。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+} 
+
+================================================================================
+ファイル: app/globals.css
+================================================================================
+
+[CSSファイル - 内容は省略]
+
+================================================================================
+ファイル: app/providers.tsx
+================================================================================
+
+'use client'
+
+import { SessionProvider } from 'next-auth/react'
+import type { Session } from 'next-auth'
+import type { ReactNode } from 'react'
+import React from 'react'
+
+export function Providers({
+  children,
+  session
+}: {
+  children: ReactNode
+  session: Session | null
+}) {
+  return (
+    <SessionProvider session={session}>
+      {children}
+    </SessionProvider>
+  )
+} 
+
+================================================================================
+ファイル: app/settings/page.tsx
+================================================================================
+
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+
+export default function SettingsPage() {
+  const { data: session } = useSession();
+  const [stripeAccountId, setStripeAccountId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('/api/users/profile');
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Profile data:', data); // デバッグ用
+          setStripeAccountId(data.stripeConnectAccountId || null);
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setError('プロフィールの取得に失敗しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (session?.user) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+  }, [session]);
+
+  const handleConnectStripe = async () => {
+    try {
+      const response = await fetch('/api/stripe/connect', {
+        method: 'GET'
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Stripeアカウントの連携に失敗しました');
+      }
+
+      const { accountLink } = await response.json();
+      if (accountLink) {
+        window.location.href = accountLink;
+      } else {
+        throw new Error('アカウントリンクの取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error connecting Stripe:', error);
+      toast.error(error instanceof Error ? error.message : 'Stripeアカウントの連携に失敗しました');
+    }
+  };
+
+  const handleStripeSettings = async () => {
+    try {
+      const response = await fetch('/api/stripe/settings');
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || 'Stripe設定の取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error opening Stripe settings:', error);
+      setError('Stripe設定の取得に失敗しました');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center">読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-3xl mx-auto px-4">
+        <h1 className="text-2xl font-bold text-gray-900 mb-8">アカウント設定</h1>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
+
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold mb-6">決済設定</h2>
+            
+            <div className="space-y-6">
+              <div className="border-b pb-6">
+                <h3 className="text-lg font-medium mb-4">Stripe Connect連携</h3>
+                {stripeAccountId ? (
+                  <>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                      <p className="text-green-700">
+                        <span className="font-medium">連携済み</span><br />
+                        <span className="text-sm">Stripe Connectアカウントと連携されています。</span>
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleConnectStripe}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Stripe設定を開く
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                      <p className="text-gray-700 text-sm">
+                        Stripe Connectと連携することで、依頼の受付と報酬の受け取りが可能になります。
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleConnectStripe}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      Stripeと連携する
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/types/next-auth.d.ts
+================================================================================
+
+import 'next-auth';
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      username?: string | null;
+    }
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+    username?: string | null;
+  }
+} 
+
+================================================================================
+ファイル: app/types/request.ts
+================================================================================
+
+export enum RequestStatus {
+  PENDING = 'PENDING',      // 受付中
+  ACCEPTED = 'ACCEPTED',    // 承諾済み
+  REJECTED = 'REJECTED',    // 拒否
+  DELIVERED = 'DELIVERED',  // 配信済み
+  COMPLETED = 'COMPLETED'   // 完了（ファイルアップロード済み）
+}
+
+export const RequestStatusText: Record<RequestStatus, string> = {
+  [RequestStatus.PENDING]: '受付中',
+  [RequestStatus.ACCEPTED]: '承諾済み',
+  [RequestStatus.REJECTED]: '拒否済み',
+  [RequestStatus.DELIVERED]: '配信済み',
+  [RequestStatus.COMPLETED]: '完了済み'
+}
+
+export const RequestStatusColor: Record<RequestStatus, string> = {
+  [RequestStatus.PENDING]: 'bg-yellow-100 text-yellow-800',
+  [RequestStatus.ACCEPTED]: 'bg-blue-100 text-blue-800',
+  [RequestStatus.REJECTED]: 'bg-red-100 text-red-800',
+  [RequestStatus.DELIVERED]: 'bg-green-100 text-green-800',
+  [RequestStatus.COMPLETED]: 'bg-purple-100 text-purple-800'
+}
+
+export interface RequestFile {
+  id: number;
+  fileName: string;
+  fileUrl: string;
+}
+
+export interface Request {
+  id: number;
+  title: string;
+  description: string;
+  amount: number;
+  status: RequestStatus;
+  sender: {
+    id: string;
+    username: string;
+    name: string;
+    image: string;
+  };
+  receiver: {
+    id: string;
+    username: string;
+    name: string;
+    image: string;
+  };
+  files: RequestFile[];
+  created_at: string;
+} 
+
+================================================================================
+ファイル: app/price-plans/page.tsx
+================================================================================
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+interface PricePlan {
+  id: number;
+  title: string;
+  description: string;
+  amount: number;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export default function PricePlansPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [plans, setPlans] = useState<PricePlan[]>([]);
+  const [editingPlan, setEditingPlan] = useState<PricePlan | null>(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    amount: '',
+  });
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      const response = await fetch('/api/price-plans');
+      if (!response.ok) {
+        throw new Error('プランの取得に失敗しました');
+      }
+      const data = await response.json();
+      setPlans(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+
+    try {
+      // 金額のバリデーション
+      const numAmount = Number(formData.amount);
+      if (isNaN(numAmount) || numAmount < 100) {
+        throw new Error('金額は100円以上の有効な数値を入力してください');
+      }
+
+      const url = editingPlan 
+        ? `/api/price-plans/${editingPlan.id}`
+        : '/api/price-plans';
+      
+      const method = editingPlan ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          amount: numAmount,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'プランの保存に失敗しました');
+      }
+
+      await fetchPlans();
+      setEditingPlan(null);
+      setFormData({ title: '', description: '', amount: '' });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // 金額入力時のバリデーション
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numValue = Number(value);
+    
+    // 空欄は許可（必須チェックはHTML5のrequiredで行う）
+    if (value === '') {
+      setFormData(prev => ({ ...prev, amount: '' }));
+      return;
+    }
+    
+    // 100円以上の整数のみ許可
+    if (!isNaN(numValue) && numValue >= 100) {
+      setFormData(prev => ({ ...prev, amount: value }));
+    }
+  };
+
+  const handleEdit = (plan: PricePlan) => {
+    setEditingPlan(plan);
+    setFormData({
+      title: plan.title,
+      description: plan.description,
+      amount: plan.amount.toString(),
+    });
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('このプランを削除してもよろしいですか？')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/price-plans/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('プランの削除に失敗しました');
+      }
+
+      await fetchPlans();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingPlan(null);
+    setFormData({ title: '', description: '', amount: '' });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* プラン一覧 */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">プラン一覧</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {plans.map((plan) => (
+              <div key={plan.id} className="bg-white rounded-lg shadow p-6">
+                <h3 className="text-xl font-semibold mb-2">{plan.title}</h3>
+                <p className="text-gray-600 mb-4">{plan.description}</p>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-900 font-bold">¥{plan.amount.toLocaleString()}</span>
+                  <div className="space-x-2">
+                    <button
+                      onClick={() => handleEdit(plan)}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      編集
+                    </button>
+                    <button
+                      onClick={() => handleDelete(plan.id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      削除
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* プラン作成/編集フォーム */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-6 py-8">
+            <h1 className="text-2xl font-bold text-gray-900 mb-8">
+              {editingPlan ? 'プラン編集' : 'プラン作成'}
+            </h1>
+
+            {error && (
+              <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* プラン名 */}
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                  プラン名
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  className="form-input block w-full"
+                  maxLength={100}
+                  required
+                />
+              </div>
+
+              {/* 説明 */}
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                  説明
+                </label>
+                <textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  rows={4}
+                  className="form-input block w-full"
+                  maxLength={1000}
+                  required
+                />
+              </div>
+
+              {/* 金額 */}
+              <div>
+                <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
+                  金額（円）
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  value={formData.amount}
+                  onChange={handleAmountChange}
+                  className="form-input block w-full"
+                  min="100"
+                  step="100"
+                  placeholder="100円以上"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                {editingPlan && (
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="btn-secondary"
+                  >
+                    キャンセル
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={saving}
+                >
+                  {saving ? '保存中...' : (editingPlan ? '更新する' : '作成する')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/price-plans/create/page.tsx
+================================================================================
+
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+
+export default function CreatePricePlanPage() {
+  const router = useRouter();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // 金額のバリデーション
+    const numAmount = Number(amount);
+    if (isNaN(numAmount) || numAmount < 100) {
+      toast.error('金額は100円以上で入力してください');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/price-plans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          amount: numAmount
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || '価格プランの作成に失敗しました');
+      }
+
+      toast.success('価格プランを作成しました');
+      router.push('/price-plans');
+    } catch (error) {
+      console.error('Error creating price plan:', error);
+      toast.error(error instanceof Error ? error.message : '価格プランの作成に失敗しました');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">新しい価格プラン</h1>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            タイトル
+          </label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            説明
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+            金額（円）
+          </label>
+          <input
+            type="number"
+            id="amount"
+            value={amount}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '' || Number(value) >= 100) {
+                setAmount(value);
+              }
+            }}
+            min="100"
+            step="100"
+            placeholder="100円以上"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+        >
+          {isSubmitting ? '作成中...' : '作成する'}
+        </button>
+      </form>
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/auth/signin/page.tsx
+================================================================================
+
+'use client';
+
+import { signIn } from 'next-auth/react';
+import Image from 'next/image';
+
+export default function SignIn() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full space-y-8 p-8">
+        <div className="text-center">
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            アカウントにログイン
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            AIリクエストサービスを利用するにはログインが必要です
+          </p>
+        </div>
+        <div className="mt-8">
+          <button
+            onClick={() => signIn('google', { callbackUrl: '/' })}
+            className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <Image
+              src="/google.svg"
+              alt="Google"
+              width={20}
+              height={20}
+              className="w-5 h-5"
+            />
+            Googleでログイン
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/requests/page.tsx
+================================================================================
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { RequestStatus, RequestStatusColor, RequestStatusText, Request, RequestFile } from '@/app/types/request';
+import Link from 'next/link';
+import { toast } from 'react-hot-toast';
+
+interface User {
+  id: string;
+  username: string | null;
+  name: string | null;
+  image: string | null;
+}
+
+async function getRequests(type: 'sent' | 'received'): Promise<Request[]> {
+  const response = await fetch(`/api/requests?type=${type}`)
+  if (!response.ok) throw new Error('依頼の取得に失敗しました')
+  const data = await response.json()
+  return data.map((request: any) => ({
+    ...request,
+    status: request.status as RequestStatus,
+    createdAt: new Date(request.created_at),
+    updatedAt: new Date(request.updated_at)
+  }))
+}
+
+export default function RequestsPage() {
+  const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  async function fetchRequests() {
+    try {
+      setLoading(true);
+      const data = await getRequests(activeTab);
+      setRequests(data);
+    } catch (error) {
+      console.error('Error fetching requests:', error);
+      toast.error('依頼の取得に失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!session) return;
+    fetchRequests();
+  }, [session, activeTab]);
+
+  const handleAccept = async (requestId: number) => {
+    try {
+      const response = await fetch(`/api/requests/${requestId}/accept`, {
+        method: 'POST'
+      });
+      if (!response.ok) throw new Error('依頼の承諾に失敗しました');
+      await fetchRequests();
+      toast.success('依頼を承諾しました');
+    } catch (error) {
+      console.error('Error accepting request:', error);
+      toast.error('依頼の承諾に失敗しました');
+    }
+  };
+
+  const handleReject = async (requestId: number) => {
+    if (!confirm('この依頼を拒否しますか？')) return;
+    try {
+      const response = await fetch(`/api/requests/${requestId}/reject`, {
+        method: 'POST'
+      });
+      if (!response.ok) throw new Error('依頼の拒否に失敗しました');
+      fetchRequests();
+    } catch (error) {
+      alert('依頼の拒否に失敗しました');
+    }
+  };
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center text-gray-600">
+            ログインが必要です
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center">読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">依頼一覧</h1>
+      
+      <div className="flex gap-4 mb-6">
+        <button
+          className={`px-4 py-2 rounded ${
+            activeTab === 'received' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+          onClick={() => setActiveTab('received')}
+        >
+          受信した依頼
+        </button>
+        <button
+          className={`px-4 py-2 rounded ${
+            activeTab === 'sent' ? 'bg-blue-500 text-white' : 'bg-gray-200'
+          }`}
+          onClick={() => setActiveTab('sent')}
+        >
+          送信した依頼
+        </button>
+      </div>
+
+      {error ? (
+        <div className="text-red-500">{error}</div>
+      ) : requests.length === 0 ? (
+        <div>依頼はありません</div>
+      ) : (
+        <div className="space-y-4">
+          {requests.map((request: any) => (
+            <div key={request.id} className="border rounded-lg p-4 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">{request.title}</h2>
+                  <p className="text-gray-600 mb-2">{request.description}</p>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-lg font-bold">¥{request.amount?.toLocaleString() || 0}</p>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-sm ${RequestStatusColor[request.status as RequestStatus]}`}>
+                      {RequestStatusText[request.status as RequestStatus]}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {activeTab === 'received' && request.status === RequestStatus.PENDING && (
+                <div className="flex gap-4 mt-4">
+                  <button
+                    onClick={() => handleAccept(request.id)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    承諾する
+                  </button>
+                  <button
+                    onClick={() => handleReject(request.id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  >
+                    拒否する
+                  </button>
+                </div>
+              )}
+              
+              <Link
+                href={`/requests/${request.id}`}
+                className="text-blue-500 hover:underline mt-4 inline-block"
+              >
+                詳細を見る
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/requests/[id]/page.tsx
+================================================================================
+
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { Request as RequestType, RequestStatus, RequestFile } from '@/app/types/request';
+import Image from 'next/image';
+import FileUploader from '../../components/FileUploader';
+import { toast } from 'react-hot-toast';
+
+export default function RequestDetailPage({ params }: { params: { id: string } }) {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [request, setRequest] = useState<RequestType | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
+
+  useEffect(() => {
+    fetchRequest();
+  }, [params.id]);
+
+  const fetchRequest = async () => {
+    try {
+      const response = await fetch(`/api/requests/${params.id}`);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || '依頼の取得に失敗しました');
+      }
+      const data = await response.json();
+      setRequest(data);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '依頼の取得に失敗しました');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAccept = async () => {
+    if (!confirm('この依頼を承諾しますか？')) return;
+    setProcessing(true);
+    try {
+      const response = await fetch(`/api/requests/${params.id}/accept`, {
+        method: 'POST'
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || '依頼の承諾に失敗しました');
+      }
+      await fetchRequest();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '依頼の承諾に失敗しました');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!confirm('この依頼を拒否しますか？')) return;
+    setProcessing(true);
+    try {
+      const response = await fetch(`/api/requests/${params.id}/reject`, {
+        method: 'POST'
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || '依頼の拒否に失敗しました');
+      }
+      await fetchRequest();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '依頼の拒否に失敗しました');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleComplete = async () => {
+    if (!confirm('この依頼を完了としてマークしますか？')) return;
+    setProcessing(true);
+    try {
+      const response = await fetch(`/api/requests/${params.id}/complete`, {
+        method: 'POST'
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || '依頼の完了処理に失敗しました');
+      }
+      await fetchRequest();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '依頼の完了処理に失敗しました');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handlePay = async () => {
+    if (!confirm('この依頼の支払い処理を開始しますか？')) return;
+    setProcessing(true);
+    try {
+      const response = await fetch(`/api/requests/${params.id}/pay`, {
+        method: 'POST'
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || '支払い処理の開始に失敗しました');
+      }
+      const { paymentUrl } = await response.json();
+      // Stripeの支払いページに遷移
+      window.location.href = paymentUrl;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '支払い処理の開始に失敗しました');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleUploadComplete = async (files: RequestFile[], status: RequestStatus) => {
+    if (request) {
+      setRequest({
+        ...request,
+        status,
+        files: [...(request.files || []), ...files]
+      });
+      toast.success('ファイルのアップロードが完了しました');
+    }
+  }
+
+  if (isLoading) {
+    return <div className="p-4">読み込み中...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>;
+  }
+
+  if (!request) {
+    return <div className="p-4">依頼が見つかりません</div>;
+  }
+
+  const isReceiver = session?.user?.email && request.receiver.id === session.user.id;
+  const isSender = session?.user?.email && request.sender.id === session.user.id;
+
+  return (
+    <div className="max-w-4xl mx-auto p-4 space-y-8">
+      <div className="bg-white rounded-lg shadow p-6">
+        <h1 className="text-2xl font-bold mb-4">{request.title}</h1>
+        
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="flex items-center space-x-2">
+            <Image
+              src={request.sender.image || '/default-avatar.png'}
+              alt={request.sender.name}
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+            <div>
+              <p className="font-medium">{request.sender.name}</p>
+              <p className="text-sm text-gray-500">@{request.sender.username}</p>
+            </div>
+          </div>
+          <div className="text-gray-400">→</div>
+          <div className="flex items-center space-x-2">
+            <Image
+              src={request.receiver.image || '/default-avatar.png'}
+              alt={request.receiver.name}
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+            <div>
+              <p className="font-medium">{request.receiver.name}</p>
+              <p className="text-sm text-gray-500">@{request.receiver.username}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">依頼内容</h2>
+          <p className="whitespace-pre-wrap">{request.description}</p>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">金額</h2>
+          <p className="text-xl font-bold">¥{request.amount.toLocaleString()}</p>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2">ステータス</h2>
+          <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+            {request.status}
+          </span>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold mb-4">添付ファイル</h2>
+          <div className="space-y-4">
+            <FileUploader
+              requestId={request.id}
+              isReceiver={request.receiverId === session?.user?.id}
+              onUploadComplete={handleUploadComplete}
+            />
+            {request.files.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                {request.files.map((file) => (
+                  <div key={file.id} className="relative aspect-square">
+                    <Image
+                      src={file.fileUrl}
+                      alt={file.fileName}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover rounded-lg"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-2">
+        {isReceiver && request.status === RequestStatus.PENDING && (
+          <>
+            <button
+              onClick={handleAccept}
+              disabled={processing}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+            >
+              承諾する
+            </button>
+            <button
+              onClick={handleReject}
+              disabled={processing}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+            >
+              拒否する
+            </button>
+          </>
+        )}
+
+        {isReceiver && request.status === RequestStatus.ACCEPTED && (
+          <button
+            onClick={handleComplete}
+            disabled={processing}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+          >
+            完了にする
+          </button>
+        )}
+
+        {isSender && request.status === RequestStatus.COMPLETED && (
+          <button
+            onClick={handlePay}
+            disabled={processing}
+            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
+          >
+            支払う
+          </button>
+        )}
+      </div>
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/requests/[id]/payment/page.tsx
+================================================================================
+
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements
+} from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+function PaymentForm() {
+  const stripe = useStripe();
+  const elements = useElements();
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setProcessing(true);
+    setError(null);
+
+    try {
+      const { error: submitError } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/requests`,
+        },
+      });
+
+      if (submitError) {
+        setError(submitError.message || '支払い処理に失敗しました');
+        setProcessing(false);
+      }
+    } catch (e) {
+      setError('支払い処理中にエラーが発生しました');
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+      <PaymentElement />
+      
+      {error && (
+        <div className="mt-4 p-2 bg-red-100 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+      
+      <button
+        type="submit"
+        disabled={!stripe || processing}
+        className="mt-4 w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
+      >
+        {processing ? '処理中...' : '支払いを確定する'}
+      </button>
+    </form>
+  );
+}
+
+export default function PaymentPage() {
+  const searchParams = useSearchParams();
+  const clientSecret = searchParams.get('client_secret');
+  
+  if (!clientSecret) {
+    return (
+      <div className="p-4 text-red-500">
+        支払い情報の取得に失敗しました
+      </div>
+    );
+  }
+
+  const options = {
+    clientSecret,
+    appearance: {
+      theme: 'stripe' as const,
+      labels: 'floating' as const,
+    },
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">支払い情報の入力</h1>
+      
+      <div className="bg-white rounded-lg shadow p-6">
+        <Elements stripe={stripePromise} options={options}>
+          <PaymentForm />
+        </Elements>
+      </div>
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/components/FileUploader.tsx
+================================================================================
+
+import { useState, useCallback } from 'react'
+import { useDropzone } from 'react-dropzone'
+import Image from 'next/image'
+import { toast } from 'react-hot-toast'
+import { RequestStatus } from '@/app/types/request'
+
+interface FileUploaderProps {
+  requestId: number
+  isReceiver: boolean
+  onUploadComplete: (files: any[], status: RequestStatus) => void
+}
+
+export default function FileUploader({ requestId, isReceiver, onUploadComplete }: FileUploaderProps) {
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return
+
+    setUploading(true)
+    setUploadProgress(0)
+
+    const formData = new FormData()
+    acceptedFiles.forEach((file) => {
+      formData.append('files', file)
+    })
+
+    try {
+      const response = await fetch(`/api/requests/${requestId}/upload`, {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'ファイルのアップロードに失敗しました')
+      }
+
+      const data = await response.json()
+      onUploadComplete(data.files, data.status)
+      setUploadProgress(100)
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      toast.error('ファイルのアップロードに失敗しました')
+    } finally {
+      setUploading(false)
+    }
+  }, [requestId, onUploadComplete])
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: true
+  })
+
+  if (!isReceiver) {
+    return null
+  }
+
+  return (
+    <div
+      {...getRootProps()}
+      className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+        isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-500'
+      }`}
+    >
+      <input {...getInputProps()} />
+      {uploading ? (
+        <div className="space-y-2">
+          <div className="text-sm text-gray-600">アップロード中...</div>
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+              style={{ width: `${uploadProgress}%` }}
+            />
+          </div>
+        </div>
+      ) : isDragActive ? (
+        <p className="text-blue-500">ファイルをドロップしてアップロード</p>
+      ) : (
+        <div className="space-y-2">
+          <p>ファイルをドラッグ＆ドロップ</p>
+          <p className="text-sm text-gray-500">または クリックしてファイルを選択</p>
+          <p className="text-xs text-gray-400">※複数のファイルをアップロードできます</p>
+        </div>
+      )}
+    </div>
+  )
+} 
+
+================================================================================
+ファイル: app/components/Navigation.tsx
+================================================================================
+
+'use client'
+
+import React from 'react'
+import { useState, useEffect } from 'react'
+import { useSession, signOut } from 'next-auth/react'
+import Link from 'next/link'
+import Image from 'next/image'
+
+export function Navigation() {
+  const { data: session } = useSession()
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [username, setUsername] = useState<string | null>(null)
+  const [userImage, setUserImage] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch('/api/users/profile')
+          if (response.ok) {
+            const data = await response.json()
+            setUsername(data.username)
+            setUserImage(data.image)
+          }
+        } catch (error) {
+          console.error('Error fetching user:', error)
+        }
+      }
+    }
+
+    fetchUser()
+  }, [session])
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between h-16">
+        <div className="flex items-center">
+          <div className="flex-shrink-0">
+            <Link href="/" className="text-xl font-bold text-primary flex items-center gap-2">
+              <span className="material-symbols-outlined">diversity_3</span>
+              AIOK
+            </Link>
+          </div>
+          
+          <div className="hidden md:ml-8 md:flex md:space-x-2">
+            <Link href="/search" 
+              className="nav-link">
+              <span className="material-symbols-outlined">search</span>
+              探す
+            </Link>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          {session?.user ? (
+            <div className="relative">
+              <button type="button" 
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800">
+                <Image
+                  src={userImage || session.user.image || '/images/default-avatar.svg'}
+                  alt="プロフィール画像"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+                <span className="material-symbols-outlined">expand_more</span>
+              </button>
+              
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                  <div className="py-1">
+                    <Link href={username ? `/${username}` : '/profile'}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <span className="material-symbols-outlined align-middle mr-2">preview</span>
+                      プロフィール確認
+                    </Link>
+                    <Link href="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <span className="material-symbols-outlined align-middle mr-2">person</span>
+                      プロフィール編集
+                    </Link>
+                    <Link href="/settings"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <span className="material-symbols-outlined align-middle mr-2">settings</span>
+                      アカウント設定
+                    </Link>
+                    <Link href="/price-plans"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <span className="material-symbols-outlined align-middle mr-2">payments</span>
+                      料金プラン
+                    </Link>
+                    <Link href="/requests"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <span className="material-symbols-outlined align-middle mr-2">history</span>
+                      依頼履歴
+                    </Link>
+                    <button
+                      onClick={() => signOut()}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <span className="material-symbols-outlined align-middle mr-2">logout</span>
+                      ログアウト
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/api/auth/signin"
+              className="nav-link nav-link-inactive">
+              <span className="material-symbols-outlined">login</span>
+              Googleでログイン
+            </Link>
+          )}
+        </div>
+      </div>
+      
+      {/* モバイルメニュー */}
+      <div className={`md:hidden ${isMobileMenuOpen ? '' : 'hidden'}`}>
+        <div className="px-2 pt-2 pb-3 space-y-1">
+          <Link href="/search" 
+            className="nav-link">
+            <span className="material-symbols-outlined">search</span>
+            探す
+          </Link>
+          
+          {session?.user ? (
+            <>
+              <Link href="/requests" 
+                className="nav-link">
+                <span className="material-symbols-outlined">history</span>
+                依頼履歴
+              </Link>
+            </>
+          ) : (
+            <Link href="/api/auth/signin"
+              className="nav-link nav-link-inactive">
+              <span className="material-symbols-outlined">login</span>
+              Googleでログイン
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+} 
+
+================================================================================
+ファイル: app/profile/page.tsx
+================================================================================
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+export default function ProfilePage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [profile, setProfile] = useState({
+    name: '',
+    bio: '',
+    image: '',
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('/api/users/profile');
+        if (!response.ok) {
+          throw new Error('プロフィールの取得に失敗しました');
+        }
+        const data = await response.json();
+        setProfile({
+          name: data.name || '',
+          bio: data.bio || '',
+          image: data.image || '',
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'エラーが発生しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const response = await fetch('/api/users/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profile),
+      });
+
+      if (!response.ok) {
+        throw new Error('プロフィールの更新に失敗しました');
+      }
+
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('画像のアップロードに失敗しました');
+      }
+
+      const data = await response.json();
+      setProfile(prev => ({ ...prev, image: data.url }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'エラーが発生しました');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-6 py-8">
+            <h1 className="text-2xl font-bold text-gray-900 mb-8">プロフィール設定</h1>
+
+            {error && (
+              <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* アバター画像 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  プロフィール画像
+                </label>
+                <div className="flex items-center gap-6">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100">
+                    <Image
+                      src={profile.image || '/images/default-avatar.png'}
+                      alt="プロフィール画像"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <label className="btn-secondary cursor-pointer">
+                    画像を変更
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* 名前 */}
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  名前
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={profile.name}
+                  onChange={(e) => setProfile(prev => ({ ...prev, name: e.target.value }))}
+                  className="form-input block w-full"
+                  maxLength={50}
+                />
+              </div>
+
+              {/* 自己紹介 */}
+              <div>
+                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+                  自己紹介
+                </label>
+                <textarea
+                  id="bio"
+                  value={profile.bio}
+                  onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
+                  rows={4}
+                  className="form-input block w-full"
+                  maxLength={500}
+                />
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={saving}
+                >
+                  {saving ? '保存中...' : '保存する'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+} 
+
+================================================================================
+ファイル: app/api/price-plans/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return new NextResponse('User not found', { status: 404 });
+    }
+
+    const plans = await prisma.pricePlan.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return NextResponse.json(plans);
+  } catch (error) {
+    console.error('Error fetching price plans:', error);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+    }
+
+    const body = await req.json();
+    console.log('Request body:', body);
+
+    // バリデーション
+    const { title, description, amount } = body;
+
+    // 詳細なバリデーション
+    if (!title) {
+      return NextResponse.json({ error: 'タイトルは必須です' }, { status: 400 });
+    }
+    if (!description) {
+      return NextResponse.json({ error: '説明は必須です' }, { status: 400 });
+    }
+    if (!amount || isNaN(Number(amount)) || Number(amount) < 100) {
+      return NextResponse.json({ error: '金額は100円以上で入力してください' }, { status: 400 });
+    }
+
+    const pricePlan = await prisma.pricePlan.create({
+      data: {
+        userId: user.id,
+        title: title.trim(),
+        description: description.trim(),
+        amount: Number(amount)
+      }
+    });
+
+    return NextResponse.json(pricePlan);
+  } catch (error) {
+    console.error('Error creating price plan:', error);
+    return NextResponse.json(
+      { error: '価格プランの作成に失敗しました' },
+      { status: 500 }
+    );
+  }
+} 
+
+================================================================================
+ファイル: app/api/price-plans/[id]/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return new NextResponse('User not found', { status: 404 });
+    }
+
+    const plan = await prisma.pricePlan.findUnique({
+      where: { id: parseInt(params.id) }
+    });
+
+    if (!plan) {
+      return new NextResponse('Plan not found', { status: 404 });
+    }
+
+    if (plan.userId !== user.id) {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
+    const body = await request.json();
+    const { title, description, amount } = body;
+
+    // バリデーション
+    if (!title || title.length > 100) {
+      return new NextResponse('プラン名は1-100文字で入力してください', { status: 400 });
+    }
+
+    if (!description || description.length > 1000) {
+      return new NextResponse('説明は1-1000文字で入力してください', { status: 400 });
+    }
+
+    if (!amount || amount < 100 || amount > 1000000) {
+      return new NextResponse('金額は100-1,000,000円の範囲で入力してください', { status: 400 });
+    }
+
+    const updatedPlan = await prisma.pricePlan.update({
+      where: { id: parseInt(params.id) },
+      data: {
+        title,
+        description,
+        amount,
+      },
+    });
+
+    return NextResponse.json(updatedPlan);
+  } catch (error) {
+    console.error('Error updating price plan:', error);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return new NextResponse('User not found', { status: 404 });
+    }
+
+    const plan = await prisma.pricePlan.findUnique({
+      where: { id: parseInt(params.id) }
+    });
+
+    if (!plan) {
+      return new NextResponse('Plan not found', { status: 404 });
+    }
+
+    if (plan.userId !== user.id) {
+      return new NextResponse('Forbidden', { status: 403 });
+    }
+
+    await prisma.pricePlan.delete({
+      where: { id: parseInt(params.id) },
+    });
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error('Error deleting price plan:', error);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+} 
+
+================================================================================
+ファイル: app/api/auth/[...nextauth]/route.ts
+================================================================================
+
+import NextAuth from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST }; 
+
+================================================================================
+ファイル: app/api/requests/route.ts
+================================================================================
+
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { validateText, validateAmount } from '@/lib/validation'
+import { RequestStatus } from '@/app/types/request'
+
+export const dynamic = 'force-dynamic'
+
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get('type') || 'received'
+
+    const where = type === 'received' 
+      ? { receiverId: user.id }
+      : { senderId: user.id }
+
+    const requests = await prisma.request.findMany({
+      where,
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
+    return NextResponse.json(requests)
+  } catch (error) {
+    console.error('Error fetching requests:', error)
+    return NextResponse.json({ error: '依頼の取得に失敗しました' }, { status: 500 })
+  }
+}
+
+interface RequestData {
+  receiver_id: string;
+  title: string;
+  description: string;
+  amount: number;
+}
+
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email }
+  });
+  if (!user) {
+    return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+  }
+
+  const data = await req.json() as RequestData;
+
+  // バリデーション
+  const titleValidation = validateText(data.title, 'タイトル');
+  const descriptionValidation = validateText(data.description, '説明');
+  
+  if (!titleValidation.isValid || !descriptionValidation.isValid || !validateAmount(data.amount) || !data.receiver_id) {
+    return NextResponse.json(
+      { 
+        error: titleValidation.message || descriptionValidation.message || '金額が不正か、受信者が指定されていません' 
+      },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const newRequest = await prisma.request.create({
+      data: {
+        title: data.title.trim(),
+        description: data.description.trim(),
+        amount: data.amount,
+        status: RequestStatus.PENDING,
+        receiverId: data.receiver_id,
+        senderId: user.id
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        }
+      }
+    });
+
+    return NextResponse.json(newRequest);
+  } catch (error) {
+    console.error('Error creating request:', error);
+    return NextResponse.json(
+      { error: '依頼の作成に失敗しました' },
+      { status: 500 }
+    );
+  }
+} 
+
+================================================================================
+ファイル: app/api/requests/[id]/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+
+export const dynamic = 'force-dynamic'
+
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 })
+    }
+
+    const requestData = await prisma.request.findUnique({
+      where: { id: parseInt(params.id) },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        },
+        files: true
+      }
+    })
+
+    if (!requestData) {
+      return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 })
+    }
+
+    // ユーザーが依頼の送信者または受信者であることを確認
+    if (requestData.senderId !== user.id && requestData.receiverId !== user.id) {
+      return NextResponse.json({ error: 'この依頼にアクセスする権限がありません' }, { status: 403 })
+    }
+
+    return NextResponse.json({
+      id: requestData.id,
+      status: requestData.status,
+      title: requestData.title,
+      description: requestData.description,
+      amount: requestData.amount,
+      sender: {
+        id: requestData.sender.id,
+        username: requestData.sender.username,
+        name: requestData.sender.name,
+        image: requestData.sender.image
+      },
+      receiver: {
+        id: requestData.receiver.id,
+        username: requestData.receiver.username,
+        name: requestData.receiver.name,
+        image: requestData.receiver.image
+      },
+      files: requestData.files,
+      created_at: requestData.createdAt
+    })
+  } catch (error) {
+    console.error('Error fetching request:', error)
+    return NextResponse.json(
+      { error: '依頼の取得に失敗しました' },
+      { status: 500 }
+    )
+  }
+} 
+
+================================================================================
+ファイル: app/api/requests/[id]/accept/route.ts
+================================================================================
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { RequestStatus } from '@/app/types/request';
+
+type RequestContext = {
+  params: {
+    id: string;
+  };
+};
+
+export const dynamic = 'force-dynamic';
+
+export async function POST(
+  req: NextRequest,
+  { params }: RequestContext
+): Promise<NextResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+    }
+
+    const requestData = await prisma.request.findUnique({
+      where: { id: parseInt(params.id) }
+    });
+
+    if (!requestData) {
+      return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
+    }
+
+    if (requestData.receiverId !== user.id) {
+      return NextResponse.json({ error: '権限がありません' }, { status: 403 });
+    }
+
+    if (requestData.status !== RequestStatus.PENDING) {
+      return NextResponse.json({ error: 'この依頼は既に処理されています' }, { status: 400 });
+    }
+
+    const updatedRequest = await prisma.request.update({
+      where: { id: parseInt(params.id) },
+      data: { status: RequestStatus.ACCEPTED }
+    });
+
+    return NextResponse.json(updatedRequest);
+  } catch (error) {
+    console.error('Error accepting request:', error);
+    return NextResponse.json({ error: '内部エラーが発生しました' }, { status: 500 });
+  }
+} 
+
+================================================================================
+ファイル: app/api/requests/[id]/reject/route.ts
+================================================================================
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { RequestStatus } from '@/app/types/request';
+
+export const dynamic = 'force-dynamic';
+
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+    }
+
+    const requestData = await prisma.request.findUnique({
+      where: { id: parseInt(params.id) }
+    });
+
+    if (!requestData) {
+      return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
+    }
+
+    if (requestData.receiverId !== user.id) {
+      return NextResponse.json({ error: '権限がありません' }, { status: 403 });
+    }
+
+    if (requestData.status !== RequestStatus.PENDING) {
+      return NextResponse.json({ error: 'この依頼は既に処理されています' }, { status: 400 });
+    }
+
+    const updatedRequest = await prisma.request.update({
+      where: { id: parseInt(params.id) },
+      data: { status: RequestStatus.REJECTED }
+    });
+
+    return NextResponse.json(updatedRequest);
+  } catch (error) {
+    console.error('Error rejecting request:', error);
+    return NextResponse.json({ error: '内部エラーが発生しました' }, { status: 500 });
+  }
+} 
+
+================================================================================
+ファイル: app/api/requests/[id]/complete/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { RequestStatus } from '@/app/types/request';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-12-18.acacia'
+});
+
+export const dynamic = 'force-dynamic';
+
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email }
+  });
+  if (!user) {
+    return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+  }
+
+  try {
+    const requestData = await prisma.request.findUnique({
+      where: { id: parseInt(params.id) },
+      include: {
+        sender: true,
+        receiver: true
+      }
+    });
+
+    if (!requestData) {
+      return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
+    }
+
+    // 依頼の送信者のみが完了できる
+    if (requestData.senderId !== user.id) {
+      return NextResponse.json({ error: '権限がありません' }, { status: 403 });
+    }
+
+    // 依頼のステータスを完了に更新
+    const updatedRequest = await prisma.request.update({
+      where: { id: parseInt(params.id) },
+      data: { status: RequestStatus.COMPLETED }
+    });
+
+    // Stripe支払いセッションを作成
+    const stripeSession = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'jpy',
+            product_data: {
+              name: `リクエスト #${params.id} の支払い`
+            },
+            unit_amount: updatedRequest.amount
+          },
+          quantity: 1
+        }
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=success`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=cancel`,
+      payment_intent_data: {
+        metadata: {
+          requestId: params.id,
+          receiverId: updatedRequest.receiverId
+        }
+      }
+    });
+
+    return NextResponse.json({
+      status: updatedRequest.status,
+      paymentUrl: stripeSession.url
+    });
+  } catch (error) {
+    console.error('Error completing request:', error);
+    return NextResponse.json(
+      { error: '依頼の完了処理に失敗しました' },
+      { status: 500 }
+    );
+  }
+} 
+
+================================================================================
+ファイル: app/api/requests/[id]/pay/route.ts
+================================================================================
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { RequestStatus } from '@/app/types/request';
+import Stripe from 'stripe';
+
+type RequestContext = {
+  params: {
+    id: string;
+  };
+};
+
+export const dynamic = 'force-dynamic';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-12-18.acacia'
+});
+
+export async function POST(
+  req: NextRequest,
+  { params }: RequestContext
+): Promise<NextResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const requestId = Number(params.id);
+    if (!requestId || isNaN(requestId)) {
+      return NextResponse.json({ error: '無効なリクエストIDです' }, { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+    }
+
+    const requestData = await prisma.request.findUnique({
+      where: { id: requestId },
+      include: {
+        receiver: true
+      }
+    });
+
+    if (!requestData) {
+      return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
+    }
+
+    if (!requestData.receiver.stripeConnectAccountId) {
+      return NextResponse.json({ error: '受信者のStripeアカウントが設定されていません' }, { status: 400 });
+    }
+
+    // Stripe支払いセッションを作成
+    const stripeSession = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: 'jpy',
+            product_data: {
+              name: `リクエスト #${params.id} の支払い`,
+            },
+            unit_amount: requestData.amount,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=success`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/requests/${params.id}?payment=cancel`,
+      payment_intent_data: {
+        application_fee_amount: Math.floor(requestData.amount * 0.1), // 10%の手数料
+        transfer_data: {
+          destination: requestData.receiver.stripeConnectAccountId,
+        },
+        metadata: {
+          requestId: params.id,
+          senderId: user.id,
+          receiverId: requestData.receiver.id
+        }
+      }
+    });
+
+    return NextResponse.json({ paymentUrl: stripeSession.url });
+  } catch (error) {
+    console.error('Error in payment API:', error);
+    return NextResponse.json(
+      { error: '支払い処理の開始に失敗しました' },
+      { status: 500 }
+    );
+  }
+} 
+
+================================================================================
+ファイル: app/api/requests/[id]/deliver/route.ts
+================================================================================
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { getStorage } from '@/lib/storage';
+import { validateUrl } from '@/lib/validation';
+import { RequestStatus } from '@/app/types/request';
+
+type RequestContext = {
+  params: {
+    id: string;
+  };
+};
+
+export async function POST(
+  req: NextRequest,
+  { params }: RequestContext
+): Promise<NextResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const requestId = Number(params.id);
+    if (isNaN(requestId)) {
+      return NextResponse.json({ error: '無効なリクエストIDです' }, { status: 400 });
+    }
+
+    const request = await prisma.request.findUnique({
+      where: { id: requestId },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        }
+      }
+    });
+
+    if (!request) {
+      return NextResponse.json({ error: 'リクエストが見つかりません' }, { status: 404 });
+    }
+
+    if (request.receiverId !== session.user.id) {
+      return NextResponse.json({ error: '権限がありません' }, { status: 403 });
+    }
+
+    if (request.status !== RequestStatus.ACCEPTED) {
+      return NextResponse.json({ error: 'このリクエストは納品できません' }, { status: 400 });
+    }
+
+    const formData = await req.formData();
+    const deliveryType = formData.get('delivery_type')?.toString();
+    const deliveryComment = formData.get('delivery_comment')?.toString();
+
+    let filePath: string | null = null;
+    let deliveryUrl: string | null = null;
+
+    if (deliveryType === 'file') {
+      const file = formData.get('file') as File;
+      if (!file) {
+        return NextResponse.json({ error: 'ファイルが必要です' }, { status: 400 });
+      }
+
+      const storage = getStorage();
+      filePath = await storage.uploadDelivery(file);
+    } else if (deliveryType === 'url') {
+      const url = formData.get('url')?.toString();
+      if (!url || !validateUrl(url)) {
+        return NextResponse.json({ error: '有効なURLを入力してください' }, { status: 400 });
+      }
+      deliveryUrl = url;
+    }
+
+    const updatedRequest = await prisma.request.update({
+      where: { id: requestId },
+      data: {
+        status: RequestStatus.DELIVERED
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        }
+      }
+    });
+
+    return NextResponse.json({
+      id: updatedRequest.id,
+      status: updatedRequest.status,
+      title: updatedRequest.title,
+      description: updatedRequest.description,
+      sender: {
+        id: updatedRequest.sender.id,
+        username: updatedRequest.sender.username,
+        display_name: updatedRequest.sender.name,
+        avatar_url: updatedRequest.sender.image
+      },
+      receiver: {
+        id: updatedRequest.receiver.id,
+        username: updatedRequest.receiver.username,
+        display_name: updatedRequest.receiver.name,
+        avatar_url: updatedRequest.receiver.image
+      },
+      created_at: updatedRequest.createdAt
+    });
+  } catch (error) {
+    console.error('Error delivering request:', error);
+    return NextResponse.json({
+      error: 'Internal Server Error',
+      message: '依頼の納品に失敗しました'
+    }, { status: 500 });
+  }
+} 
+
+================================================================================
+ファイル: app/api/requests/[id]/upload/route.ts
+================================================================================
+
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { getStorage } from '@/lib/storage'
+import { RequestStatus } from '@/app/types/request'
+
+export const dynamic = 'force-dynamic'
+
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email }
+  })
+
+  if (!user) {
+    return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 })
+  }
+
+  const request = await prisma.request.findUnique({
+    where: { id: parseInt(params.id) },
+    include: {
+      sender: {
+        select: {
+          id: true,
+          email: true
+        }
+      },
+      receiver: {
+        select: {
+          id: true,
+          email: true
+        }
+      }
+    }
+  })
+
+  if (!request) {
+    return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 })
+  }
+
+  // デバッグ用にログを追加
+  console.log('Request:', {
+    id: request.id,
+    senderId: request.senderId,
+    receiverId: request.receiverId,
+    status: request.status,
+    sender: request.sender,
+    receiver: request.receiver,
+    currentUser: user
+  })
+
+  if (request.receiverId !== user.id) {
+    return NextResponse.json({ 
+      error: '権限がありません',
+      debug: { receiverId: request.receiverId, userId: user.id }
+    }, { status: 403 })
+  }
+
+  try {
+    const formData = await req.formData()
+    const files = formData.getAll('files')
+    if (!files || files.length === 0 || !files.every(file => file instanceof Blob)) {
+      return NextResponse.json({ error: 'ファイルが選択されていません' }, { status: 400 })
+    }
+
+    const storage = getStorage()
+    const fileUrl = await storage.uploadRequestFiles(files as File[])
+
+    // リクエストをDELIVEREDに更新
+    const updatedRequest = await prisma.request.update({
+      where: { id: parseInt(params.id) },
+      data: {
+        status: RequestStatus.DELIVERED
+      },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true
+          }
+        }
+      }
+    })
+
+    // ファイル情報を保存（ZIPファイルとして1つ保存）
+    const requestFile = await prisma.requestFile.create({
+      data: {
+        requestId: parseInt(params.id),
+        fileName: `request-${params.id}-files.zip`,
+        fileUrl: fileUrl
+      }
+    })
+
+    return NextResponse.json({
+      files: [requestFile],
+      status: updatedRequest.status
+    })
+  } catch (error) {
+    console.error('Error uploading file:', error)
+    return NextResponse.json(
+      { error: 'ファイルのアップロードに失敗しました' },
+      { status: 500 }
+    )
+  }
+} 
+
+================================================================================
+ファイル: app/api/users/profile/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import { getStorage } from '@/lib/storage';
+import { validateText } from '@/lib/validation';
+
+// GETリクエスト - プロフィール取得
+export async function GET(): Promise<NextResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        name: true,
+        bio: true,
+        image: true,
+        stripeConnectAccountId: true,
+        hourlyRate: true
+      }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+    }
+
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    return NextResponse.json(
+      { error: 'プロフィールの取得に失敗しました' },
+      { status: 500 }
+    );
+  }
+}
+
+// POSTリクエスト - プロフィール更新（マルチパートフォームデータ対応）
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+    }
+
+    const formData = await request.formData();
+    const storage = getStorage();
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+    }
+
+    // 基本情報の更新
+    const username = formData.get('username')?.toString();
+    const displayName = formData.get('display_name')?.toString();
+    const bio = formData.get('bio')?.toString();
+    const hourlyRate = formData.get('hourly_rate')?.toString();
+
+    // バリデーション
+    if (username) {
+      const usernameValidation = validateText(username, 'ユーザー名', { maxLength: 30 });
+      if (!usernameValidation.isValid) {
+        return NextResponse.json({ error: usernameValidation.message }, { status: 400 });
+      }
+    }
+
+    if (displayName) {
+      const displayNameValidation = validateText(displayName, '表示名', { maxLength: 50 });
+      if (!displayNameValidation.isValid) {
+        return NextResponse.json({ error: displayNameValidation.message }, { status: 400 });
+      }
+    }
+
+    if (bio) {
+      const bioValidation = validateText(bio, '自己紹介', { maxLength: 160 });
+      if (!bioValidation.isValid) {
+        return NextResponse.json({ error: bioValidation.message }, { status: 400 });
+      }
+    }
+
+    // アバター画像の処理
+    const avatarFile = formData.get('avatar') as File | null;
+    let avatarUrl = user.image;
+    if (avatarFile && avatarFile.size > 0) {
+      if (!avatarFile.type.startsWith('image/')) {
+        return NextResponse.json({ error: 'アップロードされたファイルは画像ではありません' }, { status: 400 });
+      }
+
+      if (avatarFile.size > 5 * 1024 * 1024) {
+        return NextResponse.json({ error: '画像サイズは5MB以下にしてください' }, { status: 400 });
+      }
+
+      // 古いアバター画像の削除
+      if (user.image && user.image.includes('r2.dev')) {
+        try {
+          await storage.deleteFile(user.image);
+        } catch (error) {
+          console.warn('Failed to delete old avatar:', error);
+        }
+      }
+
+      // 新しいアバター画像のアップロード
+      avatarUrl = await storage.uploadAvatar(avatarFile);
+    }
+
+    // ユーザー情報の更新
+    const updatedUser = await prisma.user.update({
+      where: { email: session.user.email },
+      data: {
+        username: username?.trim(),
+        name: displayName?.trim(),
+        bio: bio?.trim(),
+        image: avatarUrl,
+        hourlyRate: hourlyRate ? parseInt(hourlyRate) : null
+      }
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return NextResponse.json({ error: 'プロフィールの更新に失敗しました' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const body = await request.json();
+    const { name, bio } = body;
+
+    const updatedUser = await prisma.user.update({
+      where: { email: session.user.email },
+      data: {
+        name,
+        bio,
+      },
+    });
+
+    return NextResponse.json({
+      name: updatedUser.name || '',
+      bio: updatedUser.bio || '',
+      image: updatedUser.image || '',
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+} 
+
+================================================================================
+ファイル: app/api/users/[username]/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
+
+export async function GET(
+  request: Request,
+  { params }: { params: { username: string } }
+) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        username: params.username
+      },
+      include: {
+        pricePlans: true
+      }
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'ユーザーが見つかりません' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      id: user.id,
+      username: user.username,
+      name: user.name,
+      email: user.email,
+      bio: user.bio,
+      image: user.image,
+      pricePlans: user.pricePlans
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return NextResponse.json(
+      { error: 'ユーザー情報の取得に失敗しました' },
+      { status: 500 }
+    );
+  }
+} 
+
+================================================================================
+ファイル: app/api/upload/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const formData = await request.formData();
+    const file = formData.get('image') as File;
+    if (!file) {
+      return new NextResponse('No file uploaded', { status: 400 });
+    }
+
+    // TODO: ここで実際の画像アップロード処理を実装
+    // 例: AWS S3やCloudinaryなどのサービスを使用
+
+    // 仮の実装として、Base64エンコードした画像URLを返す
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64 = buffer.toString('base64');
+    const mimeType = file.type;
+    const dataUrl = `data:${mimeType};base64,${base64}`;
+
+    // ユーザーのimage URLを更新
+    await prisma.user.update({
+      where: { email: session.user.email },
+      data: { image: dataUrl },
+    });
+
+    return NextResponse.json({ url: dataUrl });
+  } catch (error) {
+    console.error('Upload error:', error);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+} 
+
+================================================================================
+ファイル: app/api/stripe/settings/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import Stripe from 'stripe';
+
+export const dynamic = 'force-dynamic';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-12-18.acacia',
+});
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user || !user.stripeConnectAccountId) {
+      return new NextResponse('Stripe account not found', { status: 404 });
+    }
+
+    try {
+      // まずログインリンクの作成を試みる
+      const loginLink = await stripe.accounts.createLoginLink(user.stripeConnectAccountId);
+      return NextResponse.json({ url: loginLink.url });
+    } catch (error) {
+      if (error instanceof Stripe.errors.StripeError && error.message.includes('not completed onboarding')) {
+        // オンボーディングが完了していない場合は新しいアカウントリンクを作成
+        const accountLink = await stripe.accountLinks.create({
+          account: user.stripeConnectAccountId,
+          refresh_url: `${process.env.NEXTAUTH_URL}/settings`,
+          return_url: `${process.env.NEXTAUTH_URL}/settings`,
+          type: 'account_onboarding',
+        });
+        return NextResponse.json({ url: accountLink.url });
+      }
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error in stripe_settings:', error);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+} 
+
+================================================================================
+ファイル: app/api/stripe/connect/route.ts
+================================================================================
+
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import Stripe from 'stripe';
+
+export const dynamic = 'force-dynamic';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-12-18.acacia'
+});
+
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: '認証が必要です' }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email }
+  });
+  if (!user) {
+    return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 });
+  }
+
+  try {
+    // もしまだConnectアカウントがなければ作成する
+    let connectAccountId = user.stripeConnectAccountId;
+    if (!connectAccountId) {
+      // 新規アカウントの作成
+      const account = await stripe.accounts.create({
+        type: 'express',
+        country: 'JP',
+        business_type: 'individual',
+        business_profile: {
+          product_description: 'プロフェッショナルサービス'
+        }
+      });
+      connectAccountId = account.id;
+      // DBに保存
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { stripeConnectAccountId: connectAccountId }
+      });
+    }
+
+    // このタイミングでアカウントリンクを作成
+    const accountLink = await stripe.accountLinks.create({
+      account: connectAccountId,
+      refresh_url: `${process.env.NEXTAUTH_URL}/settings`,
+      return_url: `${process.env.NEXTAUTH_URL}/settings`,
+      type: 'account_onboarding',
+    });
+
+    return NextResponse.json({ accountLink: accountLink.url });
+  } catch (error) {
+    console.error('Error creating Stripe Connect account:', error);
+    return NextResponse.json(
+      { error: 'Stripeアカウントの作成に失敗しました' },
+      { status: 500 }
+    );
+  }
+} 
+
+================================================================================
+ファイル: app/[username]/page.tsx
+================================================================================
+
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { User } from '@prisma/client';
+import { useSession } from 'next-auth/react';
+
+type PricePlan = {
+  id: number;
+  title: string;
+  description: string;
+  amount: number;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type UserWithPlans = User & {
+  pricePlans: PricePlan[];
+  image?: string;
+  name?: string;
+  username?: string;
+  bio?: string;
+};
+
+type RequestModalProps = {
+  plan: PricePlan;
+  onClose: () => void;
+  onSubmit: (title: string, description: string) => void;
+};
+
+function RequestModal({ plan, onClose, onSubmit }: RequestModalProps) {
+  const [title, setTitle] = useState(`${plan.title}の依頼`);
+  const [description, setDescription] = useState('');
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+        <h2 className="text-xl font-bold mb-4">依頼内容の入力</h2>
+        
+        <div className="mb-6">
+          <h3 className="text-lg font-medium mb-2">選択したプラン</h3>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <p className="font-medium">{plan.title}</p>
+            <p className="text-gray-600 mt-1">{plan.description}</p>
+            <p className="text-lg font-bold mt-2">¥{plan.amount.toLocaleString()}</p>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            タイトル
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            maxLength={100}
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            依頼内容の詳細
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={5}
+            maxLength={1000}
+            placeholder="依頼内容の詳細を入力してください"
+          />
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            キャンセル
+          </button>
+          <button
+            onClick={() => onSubmit(title, description)}
+            disabled={!title.trim() || !description.trim()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            依頼を作成
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function UserProfilePage({ params }: { params: { username: string } }) {
+  const [user, setUser] = useState<UserWithPlans | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<PricePlan | null>(null);
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch(`/api/users/${params.username}`);
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+        } else {
+          setError('ユーザーが見つかりません');
+        }
+      } catch (error) {
+        setError('データの取得に失敗しました');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [params.username]);
+
+  // 自分のプロフィールページかどうかをチェック
+  const isOwnProfile = session?.user?.email === user?.email;
+
+  const handleCreateRequest = async (title: string, description: string) => {
+    if (!selectedPlan || !user) return;
+
+    try {
+      const response = await fetch('/api/requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          receiver_id: user.id,
+          title: title,
+          description: description,
+          amount: selectedPlan.amount,
+          plan_title: selectedPlan.title,
+          plan_description: selectedPlan.description
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedPlan(null);
+        router.push('/requests');
+      } else {
+        const error = await response.json();
+        alert(error.error || '依頼の作成に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error creating request:', error);
+      alert('依頼の作成に失敗しました');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center">読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center text-red-600">{error}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-3xl mx-auto px-4">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-center gap-4 mb-6">
+              <Image
+                src={user.image || '/images/default-avatar.svg'}
+                alt={user.name || user.username || ''}
+                width={80}
+                height={80}
+                className="rounded-full"
+              />
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {user.name || user.username}
+                </h1>
+                {user.bio && (
+                  <p className="mt-2 text-gray-600">{user.bio}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">料金プラン</h2>
+              <div className="space-y-6">
+                {user.pricePlans.map((plan) => (
+                  <div key={plan.id} className="border rounded-lg p-6">
+                    <h3 className="text-lg font-medium mb-2">{plan.title}</h3>
+                    <p className="text-gray-600 mb-6">{plan.description}</p>
+                    <div className="flex flex-col gap-4">
+                      <div className="text-2xl font-bold text-gray-900">
+                        ¥{plan.amount.toLocaleString()}
+                      </div>
+                      {!isOwnProfile && (
+                        <button
+                          onClick={() => setSelectedPlan(plan)}
+                          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                        >
+                          このプランで依頼
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {user.pricePlans.length === 0 && (
+                  <p className="text-gray-500 text-center py-4">
+                    料金プランはまだ登録されていません
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {selectedPlan && (
+        <RequestModal
+          plan={selectedPlan}
+          onClose={() => setSelectedPlan(null)}
+          onSubmit={handleCreateRequest}
+        />
+      )}
+    </div>
+  );
+} 

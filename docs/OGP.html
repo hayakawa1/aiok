@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>AIOK OGP 画像サンプル</title>
+  <style>
+    /* 全体のリセット */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* アートボード全体 */
+    .ogp-container {
+      width: 1200px;           /* Facebook推奨サイズ */
+      height: 630px;           /* Facebook推奨サイズ */
+      background: #ffffff;     /* 白 or ライトグレーでもOK */
+      display: flex;
+      justify-content: center; /* 水平中央揃え */
+      align-items: center;     /* 垂直中央揃え */
+      position: relative;      /* シャドウ等の配置用 */
+      font-family: 'Noto Sans JP', 'Roboto', sans-serif;
+    }
+
+    /* ほんのり影をつける例 */
+    .ogp-container::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      pointer-events: none;
+    }
+
+    /* 中央よりやや上に配置する用のラッパー */
+    .content {
+      text-align: center;
+      transform: translateY(-10%); /* 中心よりやや上に */
+      z-index: 1; /* シャドウの擬似要素より前面に */
+    }
+
+    /* ロゴ部分（AIOK + icon） */
+    .logo {
+      font-size: 64px;           /* ロゴは大きめ */
+      font-weight: 700;
+      color: #6366f1;            /* プライマリーカラー */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    /* Material Symbols のアイコンを差し替えるための例 */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 48;
+      margin-right: 8px;
+      font-size: 60px; /* ロゴ文字より若干小さめでもOK */
+    }
+
+    /* キャッチフレーズ */
+    .catch-phrase {
+      font-size: 28px; /* ロゴより小さい */
+      color: #333;     /* 背景が白の場合は十分なコントラスト */
+    }
+  </style>
+  <!-- Material Symbols の読み込み例（Google Fonts） -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+</head>
+<body>
+  <div class="ogp-container">
+    <div class="content">
+      <!-- ロゴ部分 -->
+      <div class="logo">
+        <!-- diversity_3 のアイコンを表示 -->
+        <span class="material-symbols-outlined">diversity_3</span>
+        <span>AIOK</span>
+      </div>
+      <!-- キャッチフレーズ -->
+      <div class="catch-phrase">
+        クリエイターと依頼者をつなぐプラットフォーム
+      </div>
+    </div>
+  </div>
+</body>
+</html>

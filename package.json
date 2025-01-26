@@ -1,0 +1,39 @@
+{
+  "name": "aiok",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@types/next-auth": "^3.13.0",
+    "@types/node": "^20.17.16",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.14",
+    "prisma": "^6.2.1",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.7.4",
+    "@aws-sdk/client-s3": "^3.735.0",
+    "@aws-sdk/lib-storage": "^3.735.0",
+    "@prisma/client": "^6.2.1",
+    "@stripe/react-stripe-js": "^3.1.1",
+    "@stripe/stripe-js": "^5.5.0",
+    "jszip": "^3.10.1",
+    "next": "^14.1.0",
+    "next-auth": "^4.24.11",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-dropzone": "^14.3.5",
+    "react-hot-toast": "^2.5.1",
+    "stripe": "^17.5.0"
+  }
+}
