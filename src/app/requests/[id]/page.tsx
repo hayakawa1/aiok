@@ -12,6 +12,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
   const { data: session } = useSession();
   const router = useRouter();
   const [request, setRequest] = useState<RequestType | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -20,8 +21,22 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
     if (params.id && session?.user) {
       console.log('Initializing with:', { id: params.id, user: session.user });
       fetchRequest();
+      fetchUser();
     }
   }, [params.id, session]);
+
+  const fetchUser = async () => {
+    if (!session?.user?.email) return;
+    try {
+      const response = await fetch('/api/users/profile');
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    }
+  };
 
   const fetchRequest = async () => {
     try {
@@ -36,7 +51,15 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
       }
 
       const data = await response.json();
-      console.log('Request data:', data);
+      console.log('Request data details:', {
+        id: data.id,
+        status: data.status,
+        receiverId: data.receiverId,
+        senderId: data.senderId,
+        receiver: data.receiver,
+        sender: data.sender,
+        fullData: data
+      });
       setRequest(data);
     } catch (error) {
       console.error('Fetch error:', error);
@@ -128,22 +151,24 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
     return <div className="p-4 text-red-500">{error}</div>;
   }
 
-  if (!request) {
-    return <div className="p-4">依頼が見つかりません</div>;
+  if (!request || !user) {
+    return <div className="p-4">データの読み込みに失敗しました</div>;
   }
 
-  const isReceiver = session?.user?.name === request.receiver.name;
-  const isSender = session?.user?.name === request.sender.name;
+  // receiverIdとsenderIdの判定を修正
+  const isReceiver = request.receiver?.id === user.id;
+  const isSender = request.sender?.id === user.id;
 
   // デバッグ情報をここで出力
   console.log('Debug Info:', {
     requestStatus: request.status,
-    receiverName: request.receiver.name,
-    sessionUserName: session?.user?.name,
+    receiverId: request.receiver?.id,
+    senderId: request.sender?.id,
+    userId: user.id,
     isReceiver,
     isSender,
-    sessionUser: session?.user,
-    receiver: request.receiver,
+    statusCheck: [RequestStatus.ACCEPTED, RequestStatus.DELIVERED].includes(request.status),
+    showUploader: isReceiver && [RequestStatus.ACCEPTED, RequestStatus.DELIVERED].includes(request.status)
   });
 
   return (

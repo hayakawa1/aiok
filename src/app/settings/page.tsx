@@ -121,14 +121,14 @@ export default function SettingsPage() {
                   <>
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
                       <p className="text-gray-700 text-sm">
-                        Stripe Connectと連携することで、依頼の受付と報酬の受け取りが可能になります。
+                        依頼の受付と報酬の受け取りには、Stripeアカウントの連携が必要です。
                       </p>
                     </div>
                     <button
                       onClick={handleConnectStripe}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      Stripeと連携する
+                      Stripeアカウントを連携する
                     </button>
                   </>
                 )}

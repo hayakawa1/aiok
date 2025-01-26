@@ -35,21 +35,18 @@ model Session {
 }
 
 model User {
-  id                    String    @id @default(cuid())
-  name                  String?
-  email                 String?   @unique
-  emailVerified         DateTime?
-  image                 String?
-  username              String?   @unique
-  bio                   String?
-  stripeCustomerId      String?   // 支払いを行うユーザー用
-  stripeConnectAccountId String?  // 支払いを受け取るユーザー用
-  hourlyRate            Int?
-  accounts              Account[]
-  sessions              Session[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  image         String?
+  username      String?   @unique
+  bio           String?
+  stripeConnectAccountId String?
+  accounts      Account[]
+  sessions      Session[]
   requestsAsSender      Request[] @relation("sender")
   requestsAsReceiver    Request[] @relation("receiver")
-  pricePlans            PricePlan[]
+  pricePlans    PricePlan[]
 }
 
 model Request {

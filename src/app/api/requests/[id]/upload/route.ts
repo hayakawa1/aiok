@@ -61,6 +61,14 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }, { status: 403 })
   }
 
+  // 依頼が承認済み状態でない場合は納品できない
+  if (request.status !== RequestStatus.ACCEPTED) {
+    return NextResponse.json({ 
+      error: '承認済みの依頼のみ納品可能です',
+      debug: { status: request.status }
+    }, { status: 400 })
+  }
+
   try {
     const formData = await req.formData()
     const files = formData.getAll('files')
@@ -71,7 +79,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const storage = getStorage()
     const fileUrl = await storage.uploadRequestFiles(files as File[])
 
-    // リクエストをDELIVEREDに更新
+    // ファイル情報を保存（ZIPファイルとして1つ保存）
+    const requestFile = await prisma.requestFile.create({
+      data: {
+        requestId: parseInt(params.id),
+        fileName: `request-${params.id}-files.zip`,
+        fileUrl: fileUrl
+      }
+    })
+
+    // ファイルのアップロードが成功したら、リクエストをDELIVEREDに更新
     const updatedRequest = await prisma.request.update({
       where: { id: parseInt(params.id) },
       data: {
@@ -94,15 +111,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             image: true
           }
         }
-      }
-    })
-
-    // ファイル情報を保存（ZIPファイルとして1つ保存）
-    const requestFile = await prisma.requestFile.create({
-      data: {
-        requestId: parseInt(params.id),
-        fileName: `request-${params.id}-files.zip`,
-        fileUrl: fileUrl
       }
     })
 

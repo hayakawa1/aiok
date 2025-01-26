@@ -21,9 +21,7 @@ export async function GET(): Promise<NextResponse> {
         username: true,
         name: true,
         bio: true,
-        image: true,
-        stripeConnectAccountId: true,
-        hourlyRate: true
+        image: true
       }
     });
 
@@ -64,7 +62,6 @@ export async function POST(request: Request) {
     const username = formData.get('username')?.toString();
     const displayName = formData.get('display_name')?.toString();
     const bio = formData.get('bio')?.toString();
-    const hourlyRate = formData.get('hourly_rate')?.toString();
 
     // バリデーション
     if (username) {
@@ -120,8 +117,7 @@ export async function POST(request: Request) {
         username: username?.trim(),
         name: displayName?.trim(),
         bio: bio?.trim(),
-        image: avatarUrl,
-        hourlyRate: hourlyRate ? parseInt(hourlyRate) : null
+        image: avatarUrl
       }
     });
 

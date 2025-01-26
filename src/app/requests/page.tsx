@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { RequestStatus, RequestStatusColor, RequestStatusLabel, Request, RequestFile } from '@/types/request';
 import Link from 'next/link';
@@ -28,7 +29,9 @@ async function getRequests(type: 'sent' | 'received'): Promise<Request[]> {
 
 export default function RequestsPage() {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<'sent' | 'received'>('sent');
+  const searchParams = useSearchParams();
+  const fromCreate = searchParams.get('from') === 'create';
+  const [activeTab, setActiveTab] = useState<'sent' | 'received'>(fromCreate ? 'sent' : 'received');
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

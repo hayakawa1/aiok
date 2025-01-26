@@ -3,12 +3,11 @@ import { Inter } from 'next/font/google'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { headers } from 'next/headers'
-import { Providers } from './providers'
+import Providers from './components/Providers'
 import { Navigation } from './components/Navigation'
 import type { ReactNode } from 'react'
 import React from 'react'
 import type { Metadata } from "next";
-import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,7 +34,7 @@ export default async function RootLayout({
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" />
       </head>
       <body className="bg-gray-50">
-        <Providers session={session}>
+        <Providers>
           <div className="min-h-screen flex flex-col">
             <nav className="bg-white border-b border-gray-200">
               <Navigation session={session} />
@@ -62,7 +61,6 @@ export default async function RootLayout({
               </div>
             </footer>
           </div>
-          <Toaster />
         </Providers>
       </body>
     </html>
