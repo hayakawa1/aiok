@@ -13,6 +13,9 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if (!user.email) return false;
       
+      // メールアドレスの@前の部分をusernameとして使用
+      const defaultUsername = user.email.split('@')[0];
+      
       // ユーザーが存在しない場合は作成
       const dbUser = await prisma.user.upsert({
         where: { email: user.email },
@@ -21,6 +24,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           image: user.image,
+          username: defaultUsername, // @前の部分をusernameとして設定
         },
       });
       
