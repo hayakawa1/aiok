@@ -1,10 +1,10 @@
-import PolicyTabs from '@/components/PolicyTabs'
+
 
 export default function 利用規約Page() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4">
-        <PolicyTabs />
+        
         <div className="bg-white rounded-lg shadow-lg p-6 mt-4">
           <h1 className="text-2xl font-bold mb-6">利用規約</h1>
           
