@@ -13,20 +13,15 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account }) {
       if (!user.email) return false;
       
-      // メールアドレスの@前の部分をusernameとして使用
-      const defaultUsername = user.email.split('@')[0];
-      
-      // ユーザーが存在しない場合は作成
-      const dbUser = await prisma.user.upsert({
-        where: { email: user.email },
-        update: {},
-        create: {
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          username: defaultUsername, // @前の部分をusernameとして設定
-        },
+      // 既存ユーザーをチェック
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email }
       });
+
+      if (!existingUser) {
+        // 新規ユーザーの場合、同意画面にリダイレクト
+        return `/auth/agreement?email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name || '')}&image=${encodeURIComponent(user.image || '')}`;
+      }
       
       return true;
     },

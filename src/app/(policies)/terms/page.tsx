@@ -1,0 +1,198 @@
+import PolicyTabs from '@/components/PolicyTabs'
+
+export default function 利用規約Page() {
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-3xl mx-auto px-4">
+        <PolicyTabs />
+        <div className="bg-white rounded-lg shadow-lg p-6 mt-4">
+          <h1 className="text-2xl font-bold mb-6">利用規約</h1>
+          
+          <div className="space-y-8">
+            <section>
+              <h2 className="text-xl font-semibold mb-4">前文</h2>
+              <p className="text-gray-600">
+                本規約は、株式会社ビット（以下、「運営会社」といいます。）が提供する「AIOK」サービス（以下、「本サービス」といいます。）を利用するすべての方（以下、「利用者」といいます。）の権利義務関係を定めるものです。利用者は、本規約に同意のうえ、本サービスを利用するものとし、本サービスを利用した時点で本規約のすべての条項に同意したものとみなします。
+              </p>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第1条（定義）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>「投稿コンテンツ」とは、利用者が本サービス上に投稿、送信、アップロードしたすべてのデータをいいます。</li>
+                <li>「作品」とは、依頼者とクリエイター間で合意された範囲内で制作され、本サービス上に投稿、納品したコンテンツをいいます。</li>
+                <li>「クリエイター」とは、依頼を受け取り、作品を制作する利用者をいいます。</li>
+                <li>「依頼者」とは、クリエイターに対して依頼を行う利用者をいいます。</li>
+                <li>「報酬」とは、依頼者が作品の対価としてクリエイターに支払う金銭をいいます。報酬は、本サービスが指定する決済手段を通じて支払われ、支払い時期は原則として納品完了後とします。</li>
+                <li>「規約とポリシー」とは、本規約、およびその他運営会社が本サービス上で掲示するガイドライン、ポリシー、表記等すべての文書を総称したものをいいます。</li>
+                <li>「個人情報」とは、住所、氏名、電子メールアドレス、その他特定の個人を識別し得る情報をいいます。</li>
+                <li>「アカウント」とは、利用者がGoogleアカウントを用いて本サービスにログインすることで作成される利用者としての資格をいいます。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第2条（本サービスの特徴）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>本サービスは、クリエイターと依頼者をマッチングするためのプラットフォームです。</li>
+                <li>運営会社は、取引や作品の内容、品質、合法性について保証せず、利用者同士の契約の当事者にもなりません。</li>
+                <li>運営会社はプラットフォームの提供のみを行い、報酬の支払いに関する決済処理は、決済代行事業者が行います。</li>
+                <li>利用者は、本サービス上で行われる一切のやり取り（依頼、納品、報酬の支払い等）に関して、自らの責任で利用するものとします。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第3条（契約の成立）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>依頼者が作品制作の依頼をし、クリエイターがこれに応じた後、依頼者が提示された報酬額を承諾し実際に支払いを行った時点で契約が成立します。</li>
+                <li>支払いが完了するまでは単なるやり取りであり、法的な契約関係は発生しません。</li>
+                <li>契約成立後、クリエイターは一方的に契約を解除することはできません。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第4条（作品の利用）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>著作権の移転範囲や利用条件は、依頼者とクリエイターが別途合意した場合に限り有効となります。合意がない場合、クリエイターが著作権を留保するものとします。</li>
+                <li>クリエイターは、作品の制作にあたり、第三者の権利を侵害しないよう適切な許諾を得る責任を負います。万一、第三者から権利侵害の申立てがあった場合、クリエイターが自己の責任と費用で解決するものとします。</li>
+                <li>納品された作品の商用利用は禁止です。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第5条（禁止事項）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>他の利用者や第三者を誹謗中傷、差別、侮辱する行為</li>
+                <li>わいせつ、暴力的、差別的、公序良俗に反するコンテンツの投稿</li>
+                <li>システムへの不正アクセスや過剰な負荷をかける行為</li>
+                <li>虚偽の情報提供やなりすまし行為</li>
+                <li>アカウントの不正取得、譲渡、貸与、売買</li>
+                <li>反社会的勢力への利益供与、その他違法行為</li>
+                <li>第三者の権利（著作権、商標権、プライバシー等）を侵害する行為</li>
+                <li>その他、運営会社が不適切と判断する行為</li>
+                <li>禁止事項に違反した場合、運営会社はアカウント停止・削除、投稿コンテンツの削除等の措置を事前通知なく行うことができ、利用者はこれに異議を述べないものとします。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第6条（報酬）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>報酬額は、クリエイターが提示した金額を依頼者が承諾した時点で確定します。</li>
+                <li>依頼者は、納品物を確認のうえ問題がなければ、納品後24時間以内に報酬を支払うものとします。</li>
+                <li>報酬は運営会社が指定する決済手段によって支払われ、支払手数料等が発生する場合は依頼者が負担します。</li>
+                <li>依頼者が支払を行わない場合、契約は不成立となり、作品の利用権も発生しません。</li>
+                <li>報酬の未払い等を原因とする紛争については、依頼者とクリエイターの間で解決するものとし、運営会社は仲裁や補償を行いません。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第7条（免責事項）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>運営会社は、利用者間の取引について一切の責任を負いません。作品の品質や合法性、納期等の条件は利用者間で協議・承諾するものとします。</li>
+                <li>本サービスの利用により生じたいかなる損害についても、運営会社は責任を負いません。ただし、運営会社の故意または重大な過失によって利用者に損害が発生した場合は、この限りではありません。</li>
+                <li>システム障害や通信障害によって利用者が被る損害についても、運営会社は責任を負いません。</li>
+                <li>利用者が本規約や法令に違反して生じた損害についても、運営会社は責任を負いません。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第8条（サービスの変更・終了）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>運営会社は、利用者への事前の告知なく本サービスの内容を変更することができます。</li>
+                <li>運営会社は、1か月前までに本サービス上で告知することにより、本サービスを終了できるものとします。</li>
+                <li>サービス終了に伴い利用者に生じた損害について、運営会社は一切の責任を負いません。</li>
+                <li>サービス終了時、利用者は運営会社が定める期間内にデータをダウンロードすることができます。期間終了後、運営会社はデータを削除する権利を有します。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第9条（規約の変更）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>運営会社は、本規約を随時変更できるものとします。</li>
+                <li>変更内容は本サービス上で告知し、告知した内容の効力発生日以降に本サービスを利用した時点で利用者は当該変更に同意したものとみなします。</li>
+                <li>運営会社は、規約変更により利用者に生じた損害について一切の責任を負いません。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第10条（分離可能性）</h2>
+              <p className="text-gray-600">
+                本規約のいずれかの条項またはその一部が法令等により無効、違法または執行不能と判断された場合でも、本規約の残りの部分は継続して有効に存続するものとします。
+              </p>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第11条（準拠法・管轄裁判所）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>本規約は日本法に準拠し、解釈されるものとします。</li>
+                <li>本規約及び本サービスに関連して紛争が生じた場合、東京地方裁判所を第一審の専属的合意管轄裁判所とします。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第12条（アカウント登録および管理）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>利用者は、アカウント登録時に真実かつ正確な情報を提供する義務を負います。</li>
+                <li>虚偽の情報や不正な手段でアカウントを取得した場合、運営会社は当該アカウントを予告なく停止または削除できるものとします。</li>
+                <li>利用者は、アカウントを第三者に貸与、譲渡、売買、共有することはできません。</li>
+                <li>複数アカウントの作成は禁止します。ただし、運営会社が明示的に許可した場合を除きます。</li>
+                <li>アカウントが削除された場合、そのアカウントに関連するデータもすべて削除されます。復旧はできません。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第13条（秘密保持）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>利用者は、本サービスの利用に関連して知り得た他の利用者や運営会社の秘密情報を、相手方の事前承諾なく第三者に開示または漏洩してはなりません。</li>
+                <li>秘密情報には、取引内容、報酬額、個人情報、技術情報など公にされていない情報が含まれます。</li>
+                <li>以下の情報は秘密情報に該当しません。</li>
+                <li>1. 既に公知となっている情報</li>
+                <li>2. 相手方から開示を受ける以前に、正当に取得または保有していた情報</li>
+                <li>3. 正当な権限を有する第三者から適法に取得した情報</li>
+                <li>4. 独自に開発した情報</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第14条（個人情報の取り扱い）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>運営会社は、利用者の個人情報を運営会社が別途定めるプライバシーポリシーに従い取り扱います。</li>
+                <li>利用者は、第三者の個人情報を取り扱う場合、適切な許諾を得るとともに第三者へ提供または開示しないものとします。</li>
+                <li>第三者の個人情報の取り扱いに関して紛争が生じた場合、利用者が自己の責任と費用でこれを解決し、運営会社は一切責任を負いません。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第15条（反社会的勢力の排除）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>利用者は、暴力団、暴力団関係企業、総会屋、政治活動標榜ゴロ、その他これらに準ずる反社会的勢力に該当しないこと、並びに将来にわたっても該当しないことを保証します。</li>
+                <li>利用者が反社会的勢力に該当すると運営会社が判断した場合、運営会社は当該利用者のアカウントを削除するなど、必要な措置をとることができます。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第16条（違反行為への対応）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>利用者が本規約や法令に違反したと運営会社が判断した場合、運営会社は事前の通知なしに、アカウント停止・削除、投稿コンテンツの削除、支払保留等の措置を行うことができます。</li>
+                <li>違反行為により運営会社または第三者に損害が生じた場合、当該行為を行った利用者は、その損害を賠償する責任を負います。</li>
+                <li>違反行為の具体例として、虚偽のレビュー投稿、不正なアカウント作成、システム不正利用、他者へのなりすましなどが含まれます。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第17条（未成年者の利用）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>本サービスは、未成年者（18歳未満）の利用を禁止します。</li>
+                <li>未成年者による利用が判明した場合、運営会社は予告なく当該アカウントを削除することができます。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第18条（利用者間の紛争解決）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>利用者間で発生した紛争については、当事者間で解決するものとし、運営会社は一切関与しません。</li>
+                <li>利用者同士のやり取りや取引条件、作品の品質等に関するトラブルは、すべて当事者間で解決してください。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">第19条（国際利用に関する規定）</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>本サービスは日本国内での利用を前提としています。</li>
+                <li>海外から利用する場合、利用者は自己の責任において適用法令を遵守するものとします。</li>
+              </ul>
+            </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">附則</h2>
+              <ul className="list-disc list-inside text-gray-600 space-y-2">
+                <li>本規約は2025年1月27日に施行します。改定が行われた場合、運営会社が定める方法により利用者に告知し、告知時に定める施行日より効力を生じます。</li>
+                <li>本規約の改定履歴は、本サービス上にて公開します。</li>
+                <li>利用者は、バックアップの必要がある場合、自己の責任においてデータの保管および複製を行うものとし、運営会社はデータの消失や損傷について一切の責任を負いません。</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
