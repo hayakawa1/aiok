@@ -2,12 +2,26 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
+
+type RequestContext = {
+  params: {
+    id: string;
+  };
+};
+
+type RequestFileCreateInput = {
+  requestId: string;
+  fileName: string;
+  fileUrl: string;
+  password?: string;
+};
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RequestContext
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -24,7 +38,7 @@ export async function GET(
     }
 
     const requestData = await prisma.request.findUnique({
-      where: { id: params.id },
+      where: { id: String(params.id) },
       include: {
         sender: {
           select: {
@@ -39,18 +53,11 @@ export async function GET(
             id: true,
             username: true,
             name: true,
-            image: true
+            image: true,
+            stripeConnectAccountId: true
           }
         },
-        files: {
-          select: {
-            id: true,
-            fileName: true,
-            fileUrl: true,
-            password: true,
-            createdAt: true
-          }
-        }
+        files: true
       }
     })
 
@@ -63,27 +70,7 @@ export async function GET(
       return NextResponse.json({ error: 'この依頼にアクセスする権限がありません' }, { status: 403 })
     }
 
-    return NextResponse.json({
-      id: requestData.id,
-      status: requestData.status,
-      title: requestData.title,
-      description: requestData.description,
-      amount: requestData.amount,
-      sender: {
-        id: requestData.sender.id,
-        username: requestData.sender.username,
-        name: requestData.sender.name,
-        image: requestData.sender.image
-      },
-      receiver: {
-        id: requestData.receiver.id,
-        username: requestData.receiver.username,
-        name: requestData.receiver.name,
-        image: requestData.receiver.image
-      },
-      files: requestData.files,
-      created_at: requestData.createdAt
-    })
+    return NextResponse.json(requestData)
   } catch (error) {
     console.error('Error fetching request:', error)
     return NextResponse.json(

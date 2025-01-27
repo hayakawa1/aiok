@@ -3,11 +3,42 @@ import { NextRequest, NextResponse } from 'next/server'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getStorage } from '@/lib/storage'
-import { Request as CustomRequest, RequestStatus } from '@/types/request'
+import { RequestStatus } from '@/types/request'
+import { Prisma } from '@prisma/client'
+
+type RequestContext = {
+  params: {
+    id: string
+  }
+}
+
+const requestInclude = {
+  sender: {
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      image: true
+    }
+  },
+  receiver: {
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      image: true,
+      stripeConnectAccountId: true
+    }
+  }
+} as const
+
+type RequestWithRelations = Prisma.RequestGetPayload<{
+  include: typeof requestInclude
+}>
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: RequestContext): Promise<NextResponse> {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.email) {
@@ -22,108 +53,80 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return NextResponse.json({ error: 'ユーザーが見つかりません' }, { status: 404 })
     }
 
-    const request = await prisma.request.findUnique({
+    const requestData = await prisma.request.findUnique({
       where: { id: params.id },
-      include: {
-        sender: {
-          select: {
-            id: true,
-            email: true
-          }
-        },
-        receiver: {
-          select: {
-            id: true,
-            email: true
-          }
-        }
-      }
-    }) as CustomRequest | null
+      include: requestInclude
+    }) as RequestWithRelations | null
 
-    if (!request) {
+    if (!requestData) {
       return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 })
     }
 
     // デバッグ用にログを追加
     console.log('Request:', {
-      id: request.id,
-      senderId: request.senderId,
-      receiverId: request.receiverId,
-      status: request.status,
-      sender: request.sender,
-      receiver: request.receiver,
+      id: requestData.id,
+      senderId: requestData.senderId,
+      receiverId: requestData.receiverId,
+      status: requestData.status,
+      sender: requestData.sender,
+      receiver: requestData.receiver,
       currentUser: user
     })
 
-    if (request.receiverId !== user.id) {
+    if (requestData.receiverId !== user.id) {
       return NextResponse.json({ 
         error: '権限がありません',
-        debug: { receiverId: request.receiverId, userId: user.id }
+        debug: { receiverId: requestData.receiverId, userId: user.id }
       }, { status: 403 })
     }
 
     // 依頼が承認済み状態でない場合は納品できない
-    if (request.status !== RequestStatus.ACCEPTED && request.status !== RequestStatus.DELIVERED) {
+    if (requestData.status !== RequestStatus.ACCEPTED) {
       return NextResponse.json({ 
-        error: '承認済みの依頼のみ納品可能です',
-        debug: { status: request.status }
+        error: 'この依頼はアップロードできない状態です',
+        debug: { status: requestData.status }
       }, { status: 400 })
     }
 
     try {
       const formData = await req.formData()
-      const files = formData.getAll('files')
-      if (!files || files.length === 0 || !files.every(file => file instanceof Blob)) {
+      const files = formData.getAll('files') as File[]
+
+      if (files.length === 0) {
         return NextResponse.json({ error: 'ファイルが選択されていません' }, { status: 400 })
       }
 
       const storage = getStorage()
-      const { fileUrl, password } = await storage.uploadRequestFiles(files as File[], request.id)
+      const { fileUrl, password } = await storage.uploadRequestFiles(files, requestData.id)
 
       // ファイル情報を保存（ZIPファイルとして1つ保存）
+      const requestFileData = {
+        requestId: requestData.id,
+        fileName: files[0].name,
+        fileUrl
+      } as const
+
       const requestFile = await prisma.requestFile.create({
         data: {
-          requestId: request.id,
-          fileName: `request-${request.id}-files.zip`,
-          fileUrl: fileUrl,
-          password: password
+          ...requestFileData,
+          ...(password ? { password } : {})
         }
       })
 
       // ファイルのアップロードが成功したら、リクエストをDELIVEREDに更新
       const updatedRequest = await prisma.request.update({
-        where: { id: request.id },
+        where: { id: requestData.id },
         data: {
           status: RequestStatus.DELIVERED
         },
-        include: {
-          sender: {
-            select: {
-              id: true,
-              username: true,
-              name: true,
-              image: true
-            }
-          },
-          receiver: {
-            select: {
-              id: true,
-              username: true,
-              name: true,
-              image: true
-            }
-          }
-        }
-      })
+        include: requestInclude
+      }) as RequestWithRelations
 
-      return NextResponse.json({
-        files: [requestFile],
-        status: updatedRequest.status
-      })
+      return NextResponse.json({ requestFile, request: updatedRequest })
     } catch (error) {
-      console.error('Error uploading file:', error)
+      console.error('Error uploading delivery:', error)
       return NextResponse.json(
-        { error: 'ファイルのアップロードに失敗しました' },
+        { error: '納品物のアップロードに失敗しました' },
         { status: 500 }
       )
     }

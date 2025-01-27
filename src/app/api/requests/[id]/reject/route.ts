@@ -3,10 +3,11 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { Request as CustomRequest, RequestStatus } from '@/types/request';
+import { Prisma } from '@prisma/client';
 
 type RequestContext = {
   params: {
-    id: string;
+    id: Prisma.RequestWhereUniqueInput['id'];
   };
 };
 
