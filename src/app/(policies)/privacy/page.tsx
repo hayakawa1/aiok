@@ -4,7 +4,7 @@ export default function プライバシーポリシーPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4">
-        
+       
         <div className="bg-white rounded-lg shadow-lg p-6 mt-4">
           <h1 className="text-2xl font-bold mb-6">プライバシーポリシー</h1>
           
@@ -96,7 +96,7 @@ export default function プライバシーポリシーPage() {
               <ul className="list-disc list-inside text-gray-600 space-y-2">
                 <li>個人情報の取り扱いに関するお問い合わせは、下記までご連絡ください：</li>
                 <li>株式会社ビット 個人情報保護担当</li>
-                <li>所在地：東京都千代田区千代田1-1-1</li>
+                <li>所在地：東京都練馬区練馬1-20-8 日建練馬ビル2F</li>
                 <li>メールアドレス：aiok.jp2025@gmail.com</li>
                 <li>受付時間：平日10:00〜17:00（土日祝日・年末年始を除く）</li>
               </ul>

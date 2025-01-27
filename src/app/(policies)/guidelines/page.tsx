@@ -4,7 +4,7 @@ export default function ガイドラインPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4">
-        
+       
         <div className="bg-white rounded-lg shadow-lg p-6 mt-4">
           <h1 className="text-2xl font-bold mb-6">ガイドライン</h1>
           
@@ -25,7 +25,6 @@ export default function ガイドラインPage() {
                 <li>著作権や肖像権など、第三者の権利を侵害する依頼は禁止です</li>
                 <li>納品された作品の商用利用は禁止です</li>
                 <li>クリエイターの作品を尊重し、誠実なコミュニケーションを心がけてください</li>
-                <li>不当に低額な報酬の設定は避けてください</li>
                 <li>納品後のキャンセルや返金要求は原則として受け付けません</li>
                 <li>作品の受け取り後は、速やかに報酬の支払いを行ってください</li>
               </ul>
@@ -37,9 +36,8 @@ export default function ガイドラインPage() {
                 <li>納期は余裕をもって設定し、必ず遵守してください</li>
                 <li>第三者の著作物を無断で使用しないでください</li>
                 <li>オリジナルの作品を制作し、剽窃や盗用は厳禁です</li>
-                <li>依頼者との連絡は誠実に行い、進捗状況を適宜報告してください</li>
-                <li>納品前に作品の品質を十分確認してください</li>
                 <li>依頼者の個人情報や依頼内容の秘密を厳守してください</li>
+                <li>不当に低額な報酬の設定は避けてください</li>
               </ul>
             </section>
             <section>
@@ -66,9 +64,7 @@ export default function ガイドラインPage() {
                 <li>礼儀正しく、丁寧な言葉遣いを心がけてください</li>
                 <li>相手を尊重し、誠実なコミュニケーションを行ってください</li>
                 <li>個人を特定する情報の交換は避けてください</li>
-                <li>プラットフォーム外での直接取引は禁止です</li>
                 <li>ハラスメントや嫌がらせは厳禁です</li>
-                <li>不適切な発言や行為は厳重に処罰されます</li>
               </ul>
             </section>
             <section>
@@ -77,30 +73,23 @@ export default function ガイドラインPage() {
                 <li>オリジナル作品の制作を基本とします</li>
                 <li>著作権や知的財産権を遵守してください</li>
                 <li>第三者の権利を侵害しないよう注意してください</li>
-                <li>AIツールを使用する場合は、事前に依頼者の同意を得てください</li>
                 <li>作品の二次利用や転売は禁止です</li>
-                <li>納品後の作品の権利は依頼者に帰属します</li>
-                <li>ポートフォリオとしての使用は、依頼者の許可を得てください</li>
+                <li>納品後の作品の権利は「クリエイター」に帰属します</li>
               </ul>
             </section>
             <section>
               <h2 className="text-xl font-semibold mb-4">報酬に関するルール</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>報酬は依頼者が設定し、クリエイターが合意した金額とします</li>
+                <li>報酬はクリエイターが設定し、依頼者が合意した金額とします</li>
                 <li>適正な報酬設定を心がけてください</li>
-                <li>プラットフォーム外での金銭のやり取りは禁止です</li>
-                <li>報酬の分割払いは原則として認められません</li>
-                <li>納品確認後、速やかに報酬の支払いを行ってください</li>
-                <li>報酬に関するトラブルは、当事者間で解決してください</li>
+                <li>報酬の分割払いは認められません</li>
               </ul>
             </section>
             <section>
               <h2 className="text-xl font-semibold mb-4">アカウント管理</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
                 <li>アカウント情報は正確に登録してください</li>
-                <li>パスワードは定期的に変更し、適切に管理してください</li>
                 <li>アカウントの譲渡や売買は禁止です</li>
-                <li>複数アカウントの取得は原則として禁止です</li>
                 <li>不正利用が確認された場合、アカウントは停止されます</li>
               </ul>
             </section>

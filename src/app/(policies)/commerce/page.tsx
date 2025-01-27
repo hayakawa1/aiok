@@ -24,15 +24,15 @@ export default function 特定商取引法に基づく表記Page() {
             <section>
               <h2 className="text-xl font-semibold mb-4">所在地</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>〒1176-0001</li>
+                <li>〒176-0001</li>
                 <li>東京都練馬区練馬1-20-8日建練馬ビル2F</li>
               </ul>
             </section>
             <section>
               <h2 className="text-xl font-semibold mb-4">お問い合わせ先</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>メールアドレス：aiok.jp2025@gmail.com（24時間受付）</li>
-                <li>電話番号：お問い合わせいただいた方に開示いたします</li>
+                <li>メールアドレス：aiok.jp2025@gmail.com</li>
+                <li>電話番号：消費者からの請求によって、広告表示事項を記載した書面又は電子メール等を遅滞なく提供します。お問い合わせはメールにてお願いいたします。</li>
                 <li>メールでのお問い合わせ対応時間：平日10:00〜17:00（土日祝日・年末年始を除く）</li>
               </ul>
             </section>
@@ -40,35 +40,21 @@ export default function 特定商取引法に基づく表記Page() {
               <h2 className="text-xl font-semibold mb-4">サービスの対価</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
                 <li>依頼者が設定した金額</li>
-                <li>消費税：内税</li>
-                <li>支払時期：納品後お支払いください</li>
+                <li>支払時期：ダウンロード後</li>
                 <li>支払方法：クレジットカード決済</li>
-                <li>手数料：クレジットカード決済手数料は当社が負担</li>
                 <li>その他費用：追加料金は発生しません</li>
               </ul>
             </section>
             <section>
-              <h2 className="text-xl font-semibold mb-4">支払いの詳細</h2>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>支払時期：作品の納品を確認後、24時間以内に決済が実行されます</li>
-                <li>支払方法：クレジットカード</li>
-                <li>支払手続き：納品確認後、登録されたクレジットカードに自動で請求されます</li>
-              </ul>
-            </section>
-            <section>
               <h2 className="text-xl font-semibold mb-4">提供時期</h2>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>依頼者とクリエイター間で合意した納期に従います</li>
-                <li>具体的な納期は、個別の取引ごとに設定されます</li>
-                <li>依頼から納品までの標準的な期間：7日間〜30日間</li>
-                <li>納期遅延が発生する可能性がある場合は、事前に依頼者に通知されます</li>
-              </ul>
+              <p className="text-gray-600">
+                提供時期を一律で定めることはありません
+              </p>
             </section>
             <section>
               <h2 className="text-xl font-semibold mb-4">返品・キャンセルについて</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>作品の性質上、返品には応じられません</li>
-                <li>納品前であれば、クリエイターは理由を問わず契約を解除できます</li>
+                <li>作品の性質上、返品には一切応じられません</li>
                 <li>依頼者は納品された作品に満足できない場合、報酬を支払わないことができます</li>
                 <li>本サービスは通信販売におけるクーリングオフ制度の対象とはならないため、納品後のキャンセルや返金は原則できません</li>
               </ul>
@@ -76,7 +62,7 @@ export default function 特定商取引法に基づく表記Page() {
             <section>
               <h2 className="text-xl font-semibold mb-4">動作環境</h2>
               <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>推奨ブラウザ：Google Chrome最新版、Firefox最新版、Safari最新版</li>
+                <li>推奨ブラウザ：Google Chrome最新版、Firefox最新版</li>
                 <li>推奨OS：Windows 10以降、macOS 10.15以降</li>
                 <li>その他：JavaScript有効化が必要</li>
               </ul>
