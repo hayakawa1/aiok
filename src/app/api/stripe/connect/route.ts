@@ -28,33 +28,52 @@ export async function GET(req: NextRequest) {
       stripeConnectAccountId: user.stripeConnectAccountId
     });
 
-    try {
-      // もしまだConnectアカウントがなければ作成する
-      let accountId = user.stripeConnectAccountId;
-      if (!accountId) {
-        // 新規アカウントの作成
-        const account = await stripe.accounts.create({
-          type: 'express',
-          country: 'JP',
-          email: user.email!,
-          capabilities: {
-            transfers: { requested: true }
-          }
-        });
-        accountId = account.id;
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
-        // ユーザー情報を更新
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { stripeConnectAccountId: accountId }
-        });
+    try {
+      // 既存のConnectアカウントがある場合
+      if (user.stripeConnectAccountId) {
+        try {
+          // まずログインリンクの作成を試みる
+          const loginLink = await stripe.accounts.createLoginLink(user.stripeConnectAccountId);
+          return NextResponse.json({ url: loginLink.url });
+        } catch (error) {
+          // オンボーディングが完了していない場合は新しいアカウントリンクを作成
+          if (error instanceof Error && error.message.includes('not completed onboarding')) {
+            const accountLink = await stripe.accountLinks.create({
+              account: user.stripeConnectAccountId,
+              refresh_url: `${baseUrl}/settings`,
+              return_url: `${baseUrl}/settings`,
+              type: 'account_onboarding'
+            });
+            return NextResponse.json({ url: accountLink.url });
+          }
+          throw error;
+        }
       }
 
-      // アカウントリンクを作成
+      // 新規アカウントの作成
+      const account = await stripe.accounts.create({
+        type: 'express',
+        country: 'JP',
+        email: user.email!,
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true }
+        }
+      });
+
+      // ユーザー情報を更新
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { stripeConnectAccountId: account.id }
+      });
+
+      // 新規アカウント用のオンボーディングリンクを作成
       const accountLink = await stripe.accountLinks.create({
-        account: accountId,
-        refresh_url: `${process.env.NEXT_PUBLIC_BASE_URL}/settings/payment`,
-        return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/settings/payment`,
+        account: account.id,
+        refresh_url: `${baseUrl}/settings`,
+        return_url: `${baseUrl}/settings`,
         type: 'account_onboarding'
       });
 

@@ -81,7 +81,7 @@ export async function POST(req: NextRequest, { params }: RequestContext): Promis
     }
 
     // 依頼が承認済み状態でない場合は納品できない
-    if (requestData.status !== RequestStatus.ACCEPTED) {
+    if (requestData.status !== RequestStatus.ACCEPTED && requestData.status !== RequestStatus.DELIVERED) {
       return NextResponse.json({ 
         error: 'この依頼はアップロードできない状態です',
         debug: { status: requestData.status }

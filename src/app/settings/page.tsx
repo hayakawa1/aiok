@@ -40,14 +40,14 @@ export default function SettingsPage() {
         method: 'GET'
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.error || 'Stripeアカウントの連携に失敗しました');
       }
 
-      const { accountLink } = await response.json();
-      if (accountLink) {
-        window.location.href = accountLink;
+      if (data.url) {
+        window.location.href = data.url;
       } else {
         throw new Error('アカウントリンクの取得に失敗しました');
       }

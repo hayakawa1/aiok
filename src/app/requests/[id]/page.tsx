@@ -17,14 +17,6 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
 
-  useEffect(() => {
-    if (params.id && session?.user) {
-      console.log('Initializing with:', { id: params.id, user: session.user });
-      fetchRequest();
-      fetchUser();
-    }
-  }, [params.id, session]);
-
   const fetchUser = async () => {
     if (!session?.user?.email) return;
     try {
@@ -35,39 +27,108 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
       }
     } catch (error) {
       console.error('Error fetching user:', error);
+      throw error;
     }
   };
 
   const fetchRequest = async () => {
+    if (!params?.id || params.id === 'undefined') {
+      throw new Error('依頼IDが指定されていません');
+    }
+
     try {
       console.log('Fetching request:', params.id);
       const response = await fetch(`/api/requests/${params.id}`);
       console.log('Response status:', response.status);
       
       if (!response.ok) {
-        const data = await response.json();
-        console.error('Error response:', data);
-        throw new Error(data.error || '依頼の取得に失敗しました');
+        const errorData = await response.json();
+        console.error('Error response:', errorData);
+        throw new Error(errorData.error || '依頼の取得に失敗しました');
       }
 
       const data = await response.json();
-      console.log('Request data details:', {
-        id: data.id,
-        status: data.status,
-        receiverId: data.receiverId,
-        senderId: data.senderId,
-        receiver: data.receiver,
-        sender: data.sender,
-        fullData: data
-      });
+      console.log('Request data:', data);
       setRequest(data);
     } catch (error) {
       console.error('Fetch error:', error);
-      setError(error instanceof Error ? error.message : '依頼の取得に失敗しました');
-    } finally {
-      setIsLoading(false);
+      throw error;
     }
   };
+
+  useEffect(() => {
+    const initialize = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      if (!params?.id || params.id === 'undefined') {
+        setError('依頼IDが指定されていません');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!session?.user) {
+        setError('ログインが必要です');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        console.log('Initializing with:', { id: params.id, user: session.user });
+        await Promise.all([fetchUser(), fetchRequest()]);
+      } catch (error) {
+        console.error('Initialization error:', error);
+        setError(error instanceof Error ? error.message : '初期化中にエラーが発生しました');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initialize();
+  }, [params?.id, session?.user]);
+
+  // 支払い完了処理用の別のuseEffect
+  useEffect(() => {
+    const processPayment = async () => {
+      if (!params?.id || !session?.user) return;
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const sessionId = searchParams.get('session_id');
+      
+      if (sessionId) {
+        try {
+          const response = await fetch('/api/stripe/payment/complete', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              sessionId,
+              requestId: params.id
+            })
+          });
+          
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || '支払い処理の完了に失敗しました');
+          }
+          
+          toast.success('支払いが完了しました');
+          // URLからsession_idパラメータを削除
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, '', newUrl);
+          
+          // リクエストの状態を更新
+          await fetchRequest();
+        } catch (error) {
+          console.error('Payment completion error:', error);
+          setError(error instanceof Error ? error.message : '支払い処理の完了に失敗しました');
+        }
+      }
+    };
+
+    processPayment();
+  }, []);  // 初回のみ実行
 
   const handleAccept = async () => {
     if (!confirm('この依頼を承諾しますか？')) return;
@@ -111,17 +172,26 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
     if (!confirm('この依頼の支払い処理を開始しますか？')) return;
     setProcessing(true);
     try {
-      const response = await fetch(`/api/requests/${params.id}/pay`, {
-        method: 'POST'
+      const response = await fetch('/api/stripe/payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ requestId: params.id })
       });
+      const data = await response.json();
+      
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.error || '支払い処理の開始に失敗しました');
       }
-      const { paymentUrl } = await response.json();
-      // Stripeの支払いページに遷移
-      window.location.href = paymentUrl;
+      
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        throw new Error('支払いURLが取得できませんでした');
+      }
     } catch (error) {
+      console.error('Payment error:', error);
       setError(error instanceof Error ? error.message : '支払い処理の開始に失敗しました');
     } finally {
       setProcessing(false);
