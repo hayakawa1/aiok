@@ -46,7 +46,13 @@ export default async function RootLayout({
             </main>
             <footer className="bg-white border-t border-gray-200 mt-auto">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-gray-500">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+                  <div className="flex flex-wrap justify-center md:justify-start items-center gap-4">
+                    <a href="/terms" className="hover:text-gray-700">利用規約</a>
+                    <a href="/privacy" className="hover:text-gray-700">プライバシーポリシー</a>
+                    <a href="/guidelines" className="hover:text-gray-700">ガイドライン</a>
+                    <a href="/commerce" className="hover:text-gray-700">特定商取引法に基づく表記</a>
+                  </div>
                   <div className="text-gray-400">
                     &copy; 2024 AIOK All rights reserved.
                   </div>
