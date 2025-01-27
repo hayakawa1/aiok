@@ -85,7 +85,7 @@ export default function HomePage() {
       <div id="flow" className="max-w-6xl mx-auto">
         <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2 bg-white/80 backdrop-blur rounded-lg px-4 py-2 shadow-sm">
           <span className="material-symbols-outlined text-gray-800">timeline</span>
-          サービスの流れ
+          サービスの流れ（依頼者の場合）
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {flowSteps.map((step, index) => (

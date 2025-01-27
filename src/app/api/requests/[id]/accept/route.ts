@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { RequestStatus } from '@/types/request';
+import { Request as CustomRequest, RequestStatus } from '@/types/request';
 
 type RequestContext = {
   params: {
@@ -31,8 +31,8 @@ export async function POST(
     }
 
     const requestData = await prisma.request.findUnique({
-      where: { id: parseInt(params.id) }
-    });
+      where: { id: params.id }
+    }) as CustomRequest | null;
 
     if (!requestData) {
       return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
@@ -47,7 +47,7 @@ export async function POST(
     }
 
     const updatedRequest = await prisma.request.update({
-      where: { id: parseInt(params.id) },
+      where: { id: params.id },
       data: { status: RequestStatus.ACCEPTED }
     });
 

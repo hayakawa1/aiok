@@ -23,16 +23,17 @@ export const RequestStatusColor: Record<RequestStatus, string> = {
 }
 
 export interface RequestFile {
-  id: number;
-  requestId: number;
+  id: string;
+  requestId: string;
   fileName: string;
   fileUrl: string;
+  password?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface Request {
-  id: number;
+  id: string;
   title: string;
   description: string;
   amount: number;
@@ -50,6 +51,7 @@ export interface Request {
     username: string;
     name: string;
     image: string;
+    stripeAccountId: string | null;
   };
   files: RequestFile[];
   createdAt: Date;

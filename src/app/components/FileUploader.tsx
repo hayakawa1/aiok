@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast'
 import { RequestStatus } from '@/types/request'
 
 interface FileUploaderProps {
-  requestId: number
+  requestId: string
   isReceiver: boolean
   onUploadComplete: (files: any[], status: RequestStatus) => void
 }

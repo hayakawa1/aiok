@@ -283,6 +283,37 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
             )}
           </div>
         </div>
+
+        {(request.status === RequestStatus.DELIVERED || request.status === RequestStatus.ACCEPTED) && request.files && request.files.length > 0 && (
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">納品ファイル</h3>
+            <div className="space-y-4">
+              {request.files.map((file) => (
+                <div key={file.id} className="flex flex-col space-y-2 border-b pb-4 last:border-b-0">
+                  <div className="flex items-center justify-between">
+                    <a
+                      href={file.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      {file.fileName}
+                    </a>
+                    <span className="text-sm text-gray-500">
+                      {new Date(file.createdAt).toLocaleString('ja-JP')}
+                    </span>
+                  </div>
+                  {file.password && (
+                    <div className="text-sm bg-white p-2 rounded">
+                      <span className="font-medium">ZIPパスワード：</span>
+                      <code className="bg-gray-100 px-2 py-1 rounded select-all">{file.password}</code>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-2">

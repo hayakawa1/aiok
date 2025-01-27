@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import JSZip from 'jszip';
+import * as zip from '@zip.js/zip.js';
+import crypto from 'crypto';
 
 export class Storage {
   private client: S3Client;
@@ -46,33 +47,62 @@ export class Storage {
     }
   }
 
-  async uploadRequestFiles(files: File[]): Promise<string> {
+  async uploadRequestFiles(files: File[], requestId: string): Promise<{ fileUrl: string; password: string }> {
     try {
-      const zip = new JSZip();
+      // リクエストIDからパスワードを生成
+      const hash = crypto.createHash('md5').update(requestId).digest('hex');
+      const password = hash.substring(0, 4);
+
+      // ZIPファイルの作成
+      const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
+        password,
+        zipCrypto: true // 従来のZIP暗号化を使用（より広く互換性がある）
+      });
+
+      // ファイルをZIPに追加
       for (const file of files) {
         const arrayBuffer = await file.arrayBuffer();
-        zip.file(file.name || `file-${Date.now()}`, arrayBuffer);
+        await zipWriter.add(file.name || `file-${Date.now()}`, new zip.Uint8ArrayReader(new Uint8Array(arrayBuffer)));
       }
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+      // ZIPファイルを完成させる
+      const zipBlob = await zipWriter.close();
       const timestamp = new Date().getTime();
       const key = `requests/${timestamp}-${Math.random().toString(36).substring(7)}.zip`;
-      const arrayBuffer = await zipBlob.arrayBuffer();
+
       const upload = new Upload({
         client: this.client,
         params: {
           Bucket: this.bucket,
           Key: key,
-          Body: Buffer.from(arrayBuffer),
+          Body: zipBlob,
           ContentType: 'application/zip',
           ACL: 'public-read'
         }
       });
+
       await upload.done();
-      return `${process.env.R2_PUBLIC_URL}/${key}`;
+      return {
+        fileUrl: `${process.env.R2_PUBLIC_URL}/${key}`,
+        password: password
+      };
     } catch (error) {
       console.error('Error uploading files:', error);
       throw new Error('ファイルのアップロードに失敗しました');
     }
+  }
+
+  private encryptContent(content: Buffer, password: string): Buffer {
+    // 暗号化に使用するキーとIVを生成
+    const key = crypto.scryptSync(password, 'salt', 32);
+    const iv = crypto.randomBytes(16);
+
+    // 暗号化
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    const encrypted = Buffer.concat([cipher.update(content), cipher.final()]);
+
+    // IVと暗号化されたコンテンツを結合
+    return Buffer.concat([iv, encrypted]);
   }
 
   async uploadAvatar(file: File): Promise<string> {
@@ -176,7 +206,6 @@ export class Storage {
       await upload.done();
       
       if (!process.env.R2_PUBLIC_URL) {
-        console.error('R2_PUBLIC_URL is not configured');
         throw new Error('R2_PUBLIC_URL is not configured');
       }
       
@@ -185,6 +214,9 @@ export class Storage {
       return fileUrl;
     } catch (error) {
       console.error('Error uploading avatar buffer:', error);
+      if (error instanceof Error && error.message === 'R2_PUBLIC_URL is not configured') {
+        throw error;
+      }
       throw new Error('アバターのアップロードに失敗しました');
     }
   }

@@ -160,8 +160,8 @@ export default function PricePlansPage() {
           <div className="grid gap-6 md:grid-cols-2">
             {plans.map((plan) => (
               <div key={plan.id} className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-xl font-semibold mb-2">{plan.title}</h3>
-                <p className="text-gray-600 mb-4">{plan.description}</p>
+                <h3 className="text-xl font-semibold mb-2 break-words line-clamp-2">{plan.title}</h3>
+                <p className="text-gray-600 mb-4 break-words line-clamp-3">{plan.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-900 font-bold">¥{plan.amount.toLocaleString()}</span>
                   <div className="space-x-2">

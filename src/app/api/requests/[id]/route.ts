@@ -24,7 +24,7 @@ export async function GET(
     }
 
     const requestData = await prisma.request.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: params.id },
       include: {
         sender: {
           select: {
@@ -42,7 +42,15 @@ export async function GET(
             image: true
           }
         },
-        files: true
+        files: {
+          select: {
+            id: true,
+            fileName: true,
+            fileUrl: true,
+            password: true,
+            createdAt: true
+          }
+        }
       }
     })
 

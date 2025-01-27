@@ -2,14 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { RequestStatus } from '@/types/request';
+import { Request as CustomRequest, RequestStatus } from '@/types/request';
+
+type RequestContext = {
+  params: {
+    id: string;
+  };
+};
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+  req: NextRequest,
+  { params }: RequestContext
+): Promise<NextResponse> {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -25,8 +31,8 @@ export async function POST(
     }
 
     const requestData = await prisma.request.findUnique({
-      where: { id: parseInt(params.id) }
-    });
+      where: { id: params.id }
+    }) as CustomRequest | null;
 
     if (!requestData) {
       return NextResponse.json({ error: '依頼が見つかりません' }, { status: 404 });
@@ -41,7 +47,7 @@ export async function POST(
     }
 
     const updatedRequest = await prisma.request.update({
-      where: { id: parseInt(params.id) },
+      where: { id: params.id },
       data: { status: RequestStatus.REJECTED }
     });
 
