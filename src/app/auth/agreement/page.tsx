@@ -4,16 +4,12 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import 利用規約Page from '@/app/(policies)/terms/page';
-import プライバシーポリシーPage from '@/app/(policies)/privacy/page';
-import ガイドラインPage from '@/app/(policies)/guidelines/page';
-import 特定商取引法に基づく表記Page from '@/app/(policies)/commerce/page';
 
 export default function AgreementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState('terms');
 
   const handleSubmit = async () => {
     if (!agreedToTerms) return;
@@ -51,52 +47,13 @@ export default function AgreementPage() {
     }
   };
 
-  const tabs = [
-    { id: 'terms', label: '利用規約' },
-    { id: 'privacy', label: 'プライバシーポリシー' },
-    { id: 'guidelines', label: 'ガイドライン' },
-    { id: 'commerce', label: '特定商取引法に基づく表記' },
-  ];
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'terms':
-        return <利用規約Page />;
-      case 'privacy':
-        return <プライバシーポリシーPage />;
-      case 'guidelines':
-        return <ガイドラインPage />;
-      case 'commerce':
-        return <特定商取引法に基づく表記Page />;
-      default:
-        return <利用規約Page />;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4 text-center">利用規約への同意</h1>
         <div className="bg-white rounded-lg shadow-lg mb-4">
-          <div className="border-b">
-            <nav className="flex">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 text-sm font-medium ${
-                    activeTab === tab.id
-                      ? 'border-b-2 border-blue-500 text-blue-600'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
-          </div>
           <div className="p-6">
-            {renderContent()}
+            <利用規約Page />
           </div>
         </div>
         <div className="flex items-center justify-center gap-2 mt-4">
@@ -108,7 +65,7 @@ export default function AgreementPage() {
             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
           <label htmlFor="terms" className="text-sm text-gray-700">
-            全ての規約に同意します
+            利用規約に同意します
           </label>
         </div>
         <button
