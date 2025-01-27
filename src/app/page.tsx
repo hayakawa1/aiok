@@ -46,13 +46,6 @@ export default function HomePage() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link
-                href="/requests"
-                className="btn bg-white text-blue-600 hover:bg-blue-50 inline-flex items-center gap-2 shadow-lg px-6 py-3 rounded-md font-medium"
-              >
-                <span className="material-symbols-outlined">login</span>
-                依頼を探す
-              </Link>
               <a href="#flow" className="text-white hover:text-blue-100 inline-flex items-center gap-2 px-6 py-3">
                 <span>サービスの流れを見る</span>
                 <span className="material-symbols-outlined">arrow_downward</span>
@@ -273,15 +266,6 @@ export default function HomePage() {
               <p className="text-gray-600 mb-4">
                 AIによる効率化でコストを抑えながら、プロフェッショナルなクオリティを実現。新しいクリエイティブ体験を、安心かつリーズナブルな料金でお試しいただけます。
               </p>
-              <div className="mt-6">
-                <Link
-                  href="/requests"
-                  className="btn btn-primary inline-flex items-center gap-2"
-                >
-                  <span className="material-symbols-outlined">search</span>
-                  クリエイターを探す
-                </Link>
-              </div>
             </div>
           </div>
 
@@ -299,55 +283,6 @@ export default function HomePage() {
               <li>プラットフォームフィー：10.0％</li>
               <li>Stripe Connect利用料：0.5％</li>
             </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* よくある質問セクション */}
-      <div id="faq" className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2 bg-white/80 backdrop-blur rounded-lg px-4 py-2 shadow-sm">
-          <span className="material-symbols-outlined text-gray-800">help</span>
-          よくある質問
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="card hover:shadow-material-md transition-shadow">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">payments</span>
-              後払いの決済フローは？
-            </h3>
-            <p className="text-gray-600">
-              成果物の確認後、気に入った場合のみクレジットカードでお支払いいただけます。
-            </p>
-          </div>
-
-          <div className="card hover:shadow-material-md transition-shadow">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">copyright</span>
-              著作権・権利帰属について
-            </h3>
-            <p className="text-gray-600">
-              著作権・権利帰属に関する詳細は<Link href="/copyright" className="text-primary hover:text-primary-dark">こちら</Link>をご確認ください。
-            </p>
-          </div>
-
-          <div className="card hover:shadow-material-md transition-shadow">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">thumb_down</span>
-              気に入らなかった場合は？
-            </h3>
-            <p className="text-gray-600">
-              成果物が期待と異なる場合は、お支払いの必要はありません。
-            </p>
-          </div>
-
-          <div className="card hover:shadow-material-md transition-shadow">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">schedule</span>
-              納期は指定できますか？
-            </h3>
-            <p className="text-gray-600">
-              いいえ。
-            </p>
           </div>
         </div>
       </div>
