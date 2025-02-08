@@ -24,10 +24,31 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const type = searchParams.get('type') || 'received'
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const sortBy = searchParams.get('sortBy') || 'createdAt'
+    const sortOrder = searchParams.get('sortOrder') || 'desc'
+    const status = searchParams.get('status')
 
-    const where = type === 'received' 
-      ? { receiverId: user.id }
-      : { senderId: user.id }
+    const skip = (page - 1) * limit
+
+    const where = {
+      ...(type === 'received' ? { receiverId: user.id } : { senderId: user.id }),
+      ...(status ? { status: status as RequestStatus } : {})
+    }
+
+    // 総件数を取得
+    const total = await prisma.request.count({ where })
+
+    // ソート条件を設定
+    const orderBy: any = {}
+    if (sortBy === 'amount') {
+      orderBy.amount = sortOrder
+    } else if (sortBy === 'updatedAt') {
+      orderBy.updatedAt = sortOrder
+    } else {
+      orderBy.createdAt = sortOrder
+    }
 
     const requests = await prisma.request.findMany({
       where,
@@ -49,12 +70,20 @@ export async function GET(request: Request) {
           }
         }
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy,
+      skip,
+      take: limit
     })
 
-    return NextResponse.json(requests)
+    return NextResponse.json({
+      requests,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    })
   } catch (error) {
     console.error('Error fetching requests:', error)
     return NextResponse.json({ error: '依頼の取得に失敗しました' }, { status: 500 })

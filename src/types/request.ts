@@ -1,17 +1,17 @@
 export enum RequestStatus {
-  PENDING = 'PENDING',      // 承認待ち
-  ACCEPTED = 'ACCEPTED',    // 承認済み
-  REJECTED = 'REJECTED',    // 拒否
-  DELIVERED = 'DELIVERED',  // 納品済み
-  COMPLETED = 'COMPLETED'   // 支払い済み
+  PENDING = 'PENDING',     // 承認待ち
+  REJECTED = 'REJECTED',   // 拒否
+  ACCEPTED = 'ACCEPTED',   // 承認済み
+  DELIVERED = 'DELIVERED', // 納品済み
+  COMPLETED = 'COMPLETED'  // お支払い済み
 }
 
 export const RequestStatusLabel: Record<RequestStatus, string> = {
   [RequestStatus.PENDING]: '承認待ち',
-  [RequestStatus.ACCEPTED]: '承認済み',
   [RequestStatus.REJECTED]: '拒否',
+  [RequestStatus.ACCEPTED]: '承認済み',
   [RequestStatus.DELIVERED]: '納品済み',
-  [RequestStatus.COMPLETED]: '支払い済み'
+  [RequestStatus.COMPLETED]: 'お支払い済み'
 }
 
 export const RequestStatusColor: Record<RequestStatus, string> = {

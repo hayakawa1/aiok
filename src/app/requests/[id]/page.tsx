@@ -169,7 +169,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
   };
 
   const handlePay = async () => {
-    if (!confirm('この依頼の支払い処理を開始しますか？')) return;
+    if (!confirm('この依頼のお支払い処理を開始しますか？')) return;
     setProcessing(true);
     try {
       const response = await fetch('/api/stripe/payment', {
@@ -182,17 +182,17 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || '支払い処理の開始に失敗しました');
+        throw new Error(data.error || 'お支払い処理の開始に失敗しました。');
       }
       
       if (data.paymentUrl) {
         window.location.href = data.paymentUrl;
       } else {
-        throw new Error('支払いURLが取得できませんでした');
+        throw new Error('お支払いURLが取得できませんでした。');
       }
     } catch (error) {
       console.error('Payment error:', error);
-      setError(error instanceof Error ? error.message : '支払い処理の開始に失敗しました');
+      setError(error instanceof Error ? error.message : 'お支払い処理の開始に失敗しました。');
     } finally {
       setProcessing(false);
     }
@@ -412,7 +412,7 @@ export default function RequestDetailPage({ params }: { params: { id: string } }
             disabled={processing}
             className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
           >
-            支払う
+            お支払いする
           </button>
         )}
       </div>

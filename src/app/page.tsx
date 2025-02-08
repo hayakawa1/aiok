@@ -25,23 +25,23 @@ export default function HomePage() {
           <div className="text-center">
             <p className="text-xl md:text-2xl mb-4 text-indigo-200 font-medium">AIOKなクリエイターマッチングサービス。</p>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              AIを味方に。「全てを可能」にする新しいクリエイティブスタイル
+              AIを味方に。「すべてを可能」にする新しいクリエイティブスタイル
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 hover:bg-white/30 transition-colors duration-300">
                 <span className="material-symbols-outlined text-4xl mb-4">rocket_launch</span>
                 <h3 className="text-xl font-bold mb-2 drop-shadow-lg">圧倒的なスピード・コスト・クオリティ</h3>
-                <p className="text-white/90">AIの活用で人間を超える生産性。あらゆるジャンルのクリエイティブに対応</p>
+                <p className="text-white/90">AIの活用で人間を超える生産性を実現。あらゆるジャンルのクリエイティブに対応。</p>
               </div>
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 hover:bg-white/30 transition-colors duration-300">
                 <span className="material-symbols-outlined text-4xl mb-4">chat_off</span>
                 <h3 className="text-xl font-bold mb-2 drop-shadow-lg">コミュニケーションレス</h3>
-                <p className="text-white/90">打ち合わせ不要。AIを活用した効率的なプロセスで時間とコストを大幅カット</p>
+                <p className="text-white/90">打ち合わせ不要。AIを活用した効率的なプロセスで時間とコストを大幅カット。</p>
               </div>
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 hover:bg-white/30 transition-colors duration-300">
                 <span className="material-symbols-outlined text-4xl mb-4">verified</span>
-                <h3 className="text-xl font-bold mb-2 drop-shadow-lg">気に入らなければ支払い不要</h3>
-                <p className="text-white/90">クリエイターが納得した上で作業。依頼者のリスクを最小限に</p>
+                <h3 className="text-xl font-bold mb-2 drop-shadow-lg">気に入らなければお支払い不要</h3>
+                <p className="text-white/90">クリエイターが納得した上で作業。依頼者のリスクを最小限に。</p>
               </div>
             </div>
             
@@ -64,19 +64,18 @@ export default function HomePage() {
         <div className="prose prose-lg max-w-none text-gray-600">
           <div className="bg-white/80 backdrop-blur rounded-xl p-8 mb-6 shadow-material hover:shadow-xl transition-shadow duration-300">
             <p className="text-2xl font-bold text-gray-900 bg-blue-50 rounded-lg p-4 mb-4">
-              「プロンプト設計やツール選択などを専門に担うクリエイター」があなたの代わりにAIを使いこなします。
+              「プロンプト設計やツール選択などを専門に担うクリエイター」が、あなたの代わりにAIを使いこなします。
             </p>
             <p className="text-lg text-indigo-800 leading-relaxed">
-              「AIを使ってこんなものがほしい」という漠然としたイメージを提案するだけで、あとはクリエイターが最適な促し方・出力の調整を行い、成果物を形にします。
+              「AIを使ってこんなものがほしい」という漠然としたイメージを提案するだけで、あとはクリエイターが最適な促し方や出力の調整を行い、成果物を形にします。
             </p>
           </div>
           <p className="mb-4">
-            「AIでなんでもできる」と一口に言っても、実はAIに適切な指示を与えるためには、プロンプトエンジニアリングなどの"スキル"が必要です。
-            AIに任せるほど制作スピードやアイデアの幅は広がりますが、その一方で「実際にどう指示すればいいのか分からない」「AIをうまく使いこなせない」という声もよく耳にします。
+            「AIでなんでもできる」と一口に言っても、実際にはAIに適切な指示を与えるための"プロンプトエンジニアリング"などのスキルが必要です。AIに任せるほど制作スピードやアイデアの幅は広がる一方、「実際にどう指示すればいいのか分からない」「AIをうまく使いこなせない」という声もよく耳にします。
           </p>
           <p className="mb-4">
             AIOKは、そうした課題を解決するために生まれました。
-            「AIに頼むこと」を丸ごと人に頼める――そんな新しいスタイルで、面倒な技術的ハードルを取り除き、AIの恩恵を誰でも簡単に享受できるようにするのがAIOKのコンセプトです。
+            「AIに頼むこと」を丸ごと人に頼める――そんな新しいスタイルで、面倒な技術的ハードルを取り除き、誰でも簡単にAIの恩恵を享受できるようにするのがAIOKのコンセプトです。
           </p>
         </div>
       </div>
@@ -149,7 +148,7 @@ export default function HomePage() {
                   セキュリティ
                 </h3>
                 <p className="text-gray-600">
-                  AIOKでは、クリエイター様の本人確認書類を直接受け取ることはございません。
+                  AIOKでは、クリエイターの本人確認書類を直接受け取ることはございません。
                   必要な情報（本人確認書類や銀行口座情報など）は、Stripeの登録プロセスで直接提出いただく形となります。
                 </p>
               </div>
@@ -183,8 +182,8 @@ export default function HomePage() {
                 AIOKの思想
               </h3>
               <p className="text-gray-600 mb-4">
-                AIの活用を妨げず、より自由で効率的なプロダクションを実現。
-                「AIに頼む感覚」をそのまま再現することを目指しています。
+                AIの活用を制限せず、より自由かつ効率的なプロダクションを実現。
+                「AIに頼む」感覚をそのまま再現することを目指しています。
               </p>
             </div>
             <div className="flex-1">
@@ -193,7 +192,7 @@ export default function HomePage() {
                 目指す未来像
               </h3>
               <p className="text-gray-600 mb-4">
-                「AIを否定せず、より便利に、より迅速に創作を楽しめる世界」
+                「AIを否定せず、より便利に、より迅速に創作を楽しめる世界」をつくること。
               </p>
             </div>
           </div>
@@ -215,10 +214,10 @@ export default function HomePage() {
                   AIの特性を活かしたアプローチ
                 </h3>
                 <p className="mb-4">
-                  AIにも本来「リテイク」という概念はありません。たとえ「無制限利用可能」とうたうAIであっても、実際には1日の利用回数やAPIコール数など、何らかの制限が設定されていることが多いです。
+                  AIには本来「リテイク」という概念がありません。たとえ「無制限利用可能」とうたうAIであっても、１日の使用回数やAPIコール数など、何らかの制限が設定されていることがほとんどです。
                 </p>
                 <p className="mb-4">
-                  また、月額サブスクなどの料金体系であっても、実質的には「1回ごとに利用料金が発生していて」構造になっています。つまりAI利用の場合、依頼人が気に入るかどうか、イメージにあっているかどうかにかかわらず、AIに何か依頼すれば利用料はかかります。
+                  また、月額サブスクなどの料金体系であっても、実質的には「依頼1回ごとに利用料金が発生する」構造になっています。そのため、依頼者が気に入るかどうかにかかわらず、AIに依頼するたびコストがかかるのが現状です。
                 </p>
               </div>
               <div className="flex-1">
@@ -252,7 +251,7 @@ export default function HomePage() {
                 安心の後払い制度
               </h3>
               <p className="text-gray-600 mb-4">
-                当サービスでは、依頼内容にご満足いただけなかった場合、支払いをしなくても問題ありません。これは、依頼者に不利になりすぎることを避けるための仕組みです。
+                当サービスでは、作品にご満足いただけなかった場合、お支払いは不要です。依頼者に不利になりすぎないよう「後払い」とすることで、まずは成果物をご確認いただき、気に入った場合のみお支払いいただく仕組みを採用しています。
               </p>
               <p className="text-gray-600">
                 「後払い」という形をとることで、まずは成果物をご確認いただき、気に入った場合のみお支払いいただくことができます。
@@ -264,7 +263,7 @@ export default function HomePage() {
                 コスト効率の良い料金体系
               </h3>
               <p className="text-gray-600 mb-4">
-                AIによる効率化でコストを抑えながら、プロフェッショナルなクオリティを実現。新しいクリエイティブ体験を、安心かつリーズナブルな料金でお試しいただけます。
+                AIによる効率化でコストを抑えつつ、プロフェッショナルなクオリティを提供。新しいクリエイティブ体験を、安心かつリーズナブルな価格でお試しいただけます。
               </p>
             </div>
           </div>
@@ -281,7 +280,7 @@ export default function HomePage() {
             <ul className="list-disc list-inside text-gray-600 space-y-2">
               <li>クレジットカード手数料：3.6％</li>
               <li>プラットフォームフィー：10.0％</li>
-              <li>Stripe Connect利用料：0.5％</li>
+              <li>Stripe Connect利用料：2.3％</li>
             </ul>
           </div>
         </div>
@@ -294,22 +293,22 @@ const flowSteps = [
   {
     icon: 'edit_note',
     title: '1. 依頼内容を送信',
-    description: '依頼したいクリエイターを探して依頼内容を送るだけ'
+    description: '依頼したいクリエイターを探して、依頼内容を送るだけ。'
   },
   {
     icon: 'smart_toy',
     title: '2. AIを活用したプロダクション',
-    description: 'クリエイターから成果物がアップロードされます'
+    description: 'クリエイターから成果物がアップロードされます。'
   },
   {
     icon: 'task_alt',
     title: '3. 成果物を確認',
-    description: 'ダウンロード等して確認'
+    description: 'ダウンロードなどしてご確認ください。'
   },
   {
     icon: 'payments',
-    title: '4. 支払い（後払い）',
-    description: '成果物に問題なければ支払い'
+    title: '4. お支払い（後払い）',
+    description: '成果物に問題なければお支払いください。'
   }
 ];
 
@@ -317,26 +316,26 @@ const creatorFlowSteps = [
   {
     icon: 'how_to_reg',
     title: '1. サイトに登録',
-    description: 'クリエイターとして登録し、プロフィールを作成'
+    description: 'クリエイターとして登録し、プロフィールを作成。'
   },
   {
     icon: 'payments',
-    title: '2. 料金プラン設定',
-    description: '提供するサービスの料金プランを設定'
+    title: '2. 料金プランの設定',
+    description: '提供するサービスの料金プランを設定。'
   },
   {
     icon: 'account_balance',
-    title: '3. ストライプ連携',
-    description: 'アカウント設定でストライプ連携を行う'
+    title: '3. Stripe連携',
+    description: 'アカウント設定でStripeを連携。'
   },
   {
     icon: 'build',
     title: '4. 制作とアップロード',
-    description: 'AIを活用して制作し、成果物をアップロード'
+    description: 'AIを活用して制作し、成果物をアップロード。'
   },
   {
     icon: 'schedule',
-    title: '5. 支払いを待つ',
-    description: '依頼者からの支払いを待ちます'
+    title: '5. お支払いを待つ',
+    description: '依頼者からのお支払いをお待ちください。'
   }
 ]; 

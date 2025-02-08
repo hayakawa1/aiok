@@ -54,7 +54,7 @@ export default async function RootLayout({
                     <a href="/commerce" className="hover:text-gray-700">特定商取引法に基づく表記</a>
                   </div>
                   <div className="text-gray-400">
-                    &copy; 2024 AIOK All rights reserved.
+                    &copy; 2025 AIOK All rights reserved.
                   </div>
                 </div>
               </div>
