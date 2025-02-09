@@ -60,6 +60,11 @@ export async function GET(req: NextRequest) {
         capabilities: {
           card_payments: { requested: true },
           transfers: { requested: true }
+        },  business_type: 'individual',
+        business_profile: {
+          url: baseUrl,
+          mcc: '7399',  // ビジネスサービス（その他）
+          product_description: 'AIを活用したコンテンツ制作・クリエイティブサービス'
         }
       });
 
