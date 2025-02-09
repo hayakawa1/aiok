@@ -37,12 +37,12 @@ export async function GET(req: NextRequest) {
       // 既存のConnectアカウントがある場合
       if (user.stripeConnectAccountId) {
         try {
-          // まずログインリンクの作成を試みる
-          const loginLink = await stripe.accounts.createLoginLink(user.stripeConnectAccountId);
-          return NextResponse.json({ url: loginLink.url });
+          // Standardアカウントの場合はダッシュボードURLを返す
+          await stripe.accounts.retrieve(user.stripeConnectAccountId);
+          return NextResponse.json({ url: `https://dashboard.stripe.com/account` });
         } catch (error) {
-          // オンボーディングが完了していない場合は新しいアカウントリンクを作成
-          if (error instanceof Error && error.message.includes('not completed onboarding')) {
+          // アカウントが見つからない場合は新しいアカウントリンクを作成
+          if (error instanceof Error && error.message.includes('No such account')) {
             const accountLink = await stripe.accountLinks.create({
               account: user.stripeConnectAccountId,
               refresh_url: `${baseUrl}/settings`,
@@ -57,13 +57,14 @@ export async function GET(req: NextRequest) {
 
       // 新規アカウントの作成
       const account = await stripe.accounts.create({
-        type: 'express',
+        type: 'standard',
         country: 'JP',
         email: user.email!,
         capabilities: {
           card_payments: { requested: true },
           transfers: { requested: true }
-        },  business_type: 'individual',
+        },
+        business_type: 'individual',
         business_profile: {
           url: 'https://aiok.jp',
           mcc: '7399',  // ビジネスサービス（その他）
