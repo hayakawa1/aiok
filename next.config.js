@@ -27,6 +27,9 @@ const nextConfig = {
     return config
   },
   reactStrictMode: true,
+  experimental: {
+    optimizeCss: true,
+  },
 }
 
 module.exports = nextConfig 
