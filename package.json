@@ -43,7 +43,7 @@
     "jszip": "^3.10.1",
     "jszip-utils": "^0.1.0",
     "nanoid": "^5.0.9",
-    "next": "^13.4.19",
+    "next": "^14.2.14",
     "next-auth": "^4.24.7",
     "node-fetch": "2.7.0",
     "react": "latest",
