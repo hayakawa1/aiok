@@ -303,7 +303,7 @@ const flowSteps = [
   {
     icon: 'task_alt',
     title: '3. 成果物を確認',
-    description: 'ダウンロードなどしてご確認ください。'
+    description: 'ダウンロードしてご確認ください。'
   },
   {
     icon: 'payments',
@@ -314,7 +314,7 @@ const flowSteps = [
 
 const creatorFlowSteps = [
   {
-    icon: 'google',
+    icon: 'g',
     title: '1. Googleアカウントで登録',
     description: 'Googleアカウントを使って登録。あなたの専用ページ（aiok.jp/[アカウント名]）が作成されます。'
   },
