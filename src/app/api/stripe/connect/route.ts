@@ -28,7 +28,10 @@ export async function GET(req: NextRequest) {
       stripeConnectAccountId: user.stripeConnectAccountId
     });
 
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    // 本番環境ではHTTPSを強制、wwwを除去
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://aiok.jp'
+      : 'http://localhost:3000';
 
     try {
       // 既存のConnectアカウントがある場合
