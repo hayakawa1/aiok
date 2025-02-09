@@ -314,9 +314,9 @@ const flowSteps = [
 
 const creatorFlowSteps = [
   {
-    icon: 'how_to_reg',
-    title: '1. サイトに登録',
-    description: 'クリエイターとして登録し、プロフィールを作成。'
+    icon: 'google',
+    title: '1. Googleアカウントで登録',
+    description: 'Googleアカウントを使って登録。あなたの専用ページ（aiok.jp/[アカウント名]）が作成されます。'
   },
   {
     icon: 'payments',
@@ -329,13 +329,13 @@ const creatorFlowSteps = [
     description: 'アカウント設定でStripeを連携。'
   },
   {
-    icon: 'build',
-    title: '4. 制作とアップロード',
-    description: 'AIを活用して制作し、成果物をアップロード。'
+    icon: 'share',
+    title: '4. SNSでの告知',
+    description: 'あなたの専用ページをSNSで共有し、依頼者を募集。'
   },
   {
-    icon: 'schedule',
-    title: '5. お支払いを待つ',
-    description: '依頼者からのお支払いをお待ちください。'
+    icon: 'build',
+    title: '5. 制作とアップロード',
+    description: '依頼が来たら、AIを活用して制作し、成果物をアップロード。'
   }
 ]; 
