@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
           transfers: { requested: true }
         },  business_type: 'individual',
         business_profile: {
-          url: baseUrl,
+          url: 'https://aiok.jp',
           mcc: '7399',  // ビジネスサービス（その他）
           product_description: 'AIを活用したコンテンツ制作・クリエイティブサービス'
         }
