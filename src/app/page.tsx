@@ -93,7 +93,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-indigo-600">check_circle</span>
-                  あなたの専用ページで作品をアピール
+                  あなたの専用ページをSNSで共有し、依頼者を募集。
                 </li>
               </ul>
             </div>
