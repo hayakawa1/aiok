@@ -199,6 +199,65 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* AIクリエイター向けセクション */}
+      <div className="max-w-6xl mx-auto bg-gradient-to-r from-purple-50 via-pink-50 to-indigo-50 rounded-2xl p-8 mb-12 transform hover:scale-[1.01] transition-all duration-300 shadow-xl">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2 bg-white/80 backdrop-blur rounded-lg px-4 py-2 shadow-sm">
+          <span className="material-symbols-outlined text-gray-800">brush</span>
+          AIクリエイターの皆様へ - 新時代の創作プラットフォーム
+        </h2>
+        <div className="prose prose-lg max-w-none text-gray-600">
+          <div className="bg-white/80 backdrop-blur rounded-xl p-8 mb-6 shadow-material hover:shadow-xl transition-shadow duration-300">
+            <p className="text-lg mb-6">
+              これまでのクリエイティブプラットフォームでは、AIを活用した作品は制限され、時には否定的な目で見られることもありました。
+              でも、もうそんな心配は必要ありません。
+            </p>
+            <p className="text-2xl font-bold text-gray-900 bg-blue-50 rounded-lg p-4 mb-4">
+              AIOKは、AIクリエイターの可能性を最大限に引き出すプラットフォーム。
+              あなたのAIスキルを存分に活かし、正当な評価を得られる場所です。
+            </p>
+            
+            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 mb-6">
+              <h3 className="text-xl font-bold mb-4">✨ AIOKが提供する新しい創作の形：</h3>
+              <ul className="list-none space-y-2">
+                <li className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-indigo-600">check_circle</span>
+                  AIの活用を制限せず、むしろ推奨
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-indigo-600">check_circle</span>
+                  プロンプトエンジニアリングスキルを正当に評価
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-indigo-600">check_circle</span>
+                  後払い制で依頼者も安心
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-indigo-600">check_circle</span>
+                  透明性の高い報酬システム
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-indigo-600">check_circle</span>
+                  あなたの専用ページで作品をアピール
+                </li>
+              </ul>
+            </div>
+
+            <p className="text-lg mb-4">
+              従来の制約から解放され、AIと共に創造する喜びを。
+              あなたのクリエイティビティに、新しいステージを。
+            </p>
+            <p className="text-xl font-bold text-indigo-800">
+              さあ、革新的なAIクリエイターたちが集う場所へ。
+              今すぐ参加して、新しい創作の扉を開きましょう。
+            </p>
+            
+            <div className="mt-6 text-sm text-gray-500">
+              #AICreator #AIArt #クリエイター募集 #新時代のクリエイティブ
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* リテイクについてのセクション */}
       <div id="policy" className="max-w-6xl mx-auto">
         <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2 bg-white/80 backdrop-blur rounded-lg px-4 py-2 shadow-sm">
