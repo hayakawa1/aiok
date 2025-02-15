@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { headers } from 'next/headers'
 import Providers from './components/Providers'
 import { Navigation } from './components/Navigation'
+import { GoogleAnalytics } from './components/GoogleAnalytics'
 import type { ReactNode } from 'react'
 import React from 'react'
 import type { Metadata } from "next";
@@ -34,6 +35,7 @@ export default async function RootLayout({
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" />
       </head>
       <body className="bg-gray-50">
+        <GoogleAnalytics />
         <Providers>
           <div className="min-h-screen flex flex-col">
             <nav className="bg-white border-b border-gray-200">
