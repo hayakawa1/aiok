@@ -132,6 +132,29 @@ export default function SettingsPage() {
                     </button>
                   </>
                 )}
+
+                <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-800 mb-2">Stripe Connect設定について</h4>
+                  <div className="text-sm text-blue-700 space-y-4">
+                    <p>
+                      AIOKではStripe ConnectのStandardタイプを利用しております。Standardタイプでは、Stripeに対し本人確認書類の他、セキュリティ・チェックリストに基づく対策措置状況申告書（アンケートフォーム）の提出（入力）が必要となっております。
+                    </p>
+                    <div>
+                      <p className="font-medium mb-2">回答例：</p>
+                      <ul className="list-disc list-inside space-y-2 ml-4">
+                        <li>顧客はどのように決済を行いますか？ → その他</li>
+                        <li>オンラインサイト上に商品・サービスを掲載してますか? → はい</li>
+                        <li>管理者画面のアクセス制限と管理者のID/PW管理 → 全て「該当なし」</li>
+                        <li>データディレクトリの露見に伴う設定不備への対策 → 全て「はい」</li>
+                        <li>Webアプリケーションの脆弱性対策 → 全て「はい」</li>
+                        <li>マルウェア対策としてのウイルス対策ソフトの導入、運用 → 全て「はい」</li>
+                        <li>悪質な有効性確認、クレジットマスターへの対策 → 「いいえ」</li>
+                        <li>委託先情報 → 従業員</li>
+                      </ul>
+                      <p className="mt-4 text-xs text-blue-600">※ AIOKが回答例を示すことについてはStripeの了承済みです。</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
