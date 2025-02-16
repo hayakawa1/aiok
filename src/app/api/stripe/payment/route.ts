@@ -67,6 +67,11 @@ export async function POST(req: NextRequest) {
     // プラットフォーム手数料（10%）を計算
     const platformFee = Math.floor(requestData.amount * 0.1);
 
+    // リクエストヘッダーからホストを取得
+    const host = req.headers.get('host');
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+    const baseUrl = `${protocol}://${host}`;
+
     // Stripe支払いセッションを作成
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -84,8 +89,8 @@ export async function POST(req: NextRequest) {
         }
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXTAUTH_URL}/requests/${requestData.id}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/requests/${requestData.id}`,
+      success_url: `${baseUrl}/requests/${requestData.id}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/requests/${requestData.id}`,
       payment_intent_data: {
         application_fee_amount: platformFee,
         transfer_data: {
