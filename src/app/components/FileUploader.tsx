@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import { RequestFile, RequestStatus } from '@/types/request'
 import JSZip from 'jszip'
+import crypto from 'crypto'
 
 interface FileUploaderProps {
   requestId: string
@@ -17,12 +18,19 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [password, setPassword] = useState<string | null>(null)
 
   const handleUpload = async (files: File[]) => {
     setUploading(true);
     setError(null);
+    setPassword(null);
 
     try {
+      // パスワードを生成
+      const hash = crypto.createHash('md5').update(requestId).digest('hex');
+      const zipPassword = hash.substring(0, 4);
+      setPassword(zipPassword);
+
       // クライアント側でZIPファイルを作成
       const zip = new JSZip();
       for (const file of files) {
@@ -95,9 +103,11 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
 
       // アップロード完了を通知
       await onUploadComplete([file], RequestStatus.DELIVERED);
+      toast.success('ファイルのアップロードが完了しました。パスワード: ' + zipPassword);
     } catch (error) {
       console.error('Error uploading file:', error);
       setError(error instanceof Error ? error.message : '納品物のアップロードに失敗しました');
+      setPassword(null);
     } finally {
       setUploading(false);
       setUploadProgress(0);
@@ -138,39 +148,48 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
   }
 
   return (
-    <div
-      {...getRootProps()}
-      className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-        isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-500'
-      }`}
-    >
-      <input {...getInputProps()} />
-      {uploading ? (
-        <div className="space-y-2">
-          <div className="text-sm text-gray-600">
-            {uploadProgress < 50 ? 'ファイルを準備中...' : 
-             uploadProgress < 100 ? 'アップロード中...' : 
-             'アップロード完了'}
+    <div className="space-y-4">
+      <div
+        {...getRootProps()}
+        className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+          isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-500'
+        }`}
+      >
+        <input {...getInputProps()} />
+        {uploading ? (
+          <div className="space-y-2">
+            <div className="text-sm text-gray-600">
+              {uploadProgress < 50 ? 'ファイルを準備中...' : 
+               uploadProgress < 100 ? 'アップロード中...' : 
+               'アップロード完了'}
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-              style={{ width: `${uploadProgress}%` }}
-            />
+        ) : isDragActive ? (
+          <p className="text-blue-500">ファイルをドロップしてアップロード</p>
+        ) : (
+          <div className="space-y-2">
+            <p>ファイルをドラッグ＆ドロップ</p>
+            <p className="text-sm text-gray-500">または クリックしてファイルを選択</p>
+            <p className="text-xs text-gray-400">※複数のファイルをアップロードできます（自動的にZIP形式に変換されます）</p>
           </div>
-        </div>
-      ) : isDragActive ? (
-        <p className="text-blue-500">ファイルをドロップしてアップロード</p>
-      ) : (
-        <div className="space-y-2">
-          <p>ファイルをドラッグ＆ドロップ</p>
-          <p className="text-sm text-gray-500">または クリックしてファイルを選択</p>
-          <p className="text-xs text-gray-400">※複数のファイルをアップロードできます（自動的にZIP形式に変換されます）</p>
-        </div>
-      )}
+        )}
+      </div>
       {error && (
         <div className="mt-4 text-red-500">
           {error}
+        </div>
+      )}
+      {password && (
+        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-700 font-medium">ファイルのパスワード</p>
+          <p className="text-lg font-mono mt-1">{password}</p>
+          <p className="text-sm text-green-600 mt-2">※このパスワードは依頼者がファイルをダウンロードする際に必要です</p>
         </div>
       )}
     </div>
