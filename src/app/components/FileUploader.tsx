@@ -88,7 +88,8 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
         },
         body: JSON.stringify({
           fileName: 'files.zip',
-          fileKey: fileKey
+          fileKey: fileKey,
+          password: zipPassword
         })
       });
 

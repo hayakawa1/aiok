@@ -40,7 +40,7 @@ export async function POST(req: NextRequest, { params }: RequestContext): Promis
       return NextResponse.json({ error: '権限がありません' }, { status: 403 })
     }
 
-    const { fileName, fileKey } = await req.json()
+    const { fileName, fileKey, password } = await req.json()
 
     // ファイル情報をDBに登録
     const file = await prisma.requestFile.create({
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest, { params }: RequestContext): Promis
         requestId: params.id,
         fileName,
         fileUrl: `${process.env.R2_PUBLIC_URL}/${fileKey}`,
+        password: password  // パスワードを保存
       }
     })
 
