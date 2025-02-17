@@ -1,4 +1,5 @@
 {
+  // Vercel deployment configuration
   "git": {
     "deploymentEnabled": {
       "main": true,
@@ -6,6 +7,7 @@
       "preview": true
     }
   },
+  // GitHub integration settings
   "github": {
     "enabled": true,
     "silent": false,
