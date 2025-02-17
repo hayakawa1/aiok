@@ -47,11 +47,5 @@
       "methods": ["OPTIONS"],
       "dest": "/api/cors"
     }
-  ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
-  "checks": {
-    "typescriptErrors": {
-      "name": "TypeScript"
-    }
-  }
+  ]
 } 
