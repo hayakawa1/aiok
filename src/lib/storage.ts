@@ -2,6 +2,7 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client
 import { Upload } from '@aws-sdk/lib-storage';
 import * as zip from '@zip.js/zip.js';
 import crypto from 'crypto';
+import { Readable } from 'stream';
 
 export class Storage {
   private client: S3Client;
@@ -53,32 +54,21 @@ export class Storage {
       const hash = crypto.createHash('md5').update(requestId).digest('hex');
       const password = hash.substring(0, 4);
 
-      // ZIPファイルの作成
-      const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
-        password,
-        zipCrypto: true // 従来のZIP暗号化を使用（より広く互換性がある）
-      });
-
-      // ファイルをZIPに追加
-      for (const file of files) {
-        const arrayBuffer = await file.arrayBuffer();
-        await zipWriter.add(file.name || `file-${Date.now()}`, new zip.Uint8ArrayReader(new Uint8Array(arrayBuffer)));
-      }
-
-      // ZIPファイルを完成させる
-      const zipBlob = await zipWriter.close();
       const timestamp = new Date().getTime();
       const key = `requests/${timestamp}-${Math.random().toString(36).substring(7)}.zip`;
 
+      // ストリーミングアップロード用の設定
       const upload = new Upload({
         client: this.client,
         params: {
           Bucket: this.bucket,
           Key: key,
-          Body: zipBlob,
+          Body: await this.createZipStream(files, password),
           ContentType: 'application/zip',
           ACL: 'public-read'
-        }
+        },
+        queueSize: 1, // 同時アップロード数を制限
+        partSize: 5 * 1024 * 1024 // パートサイズを5MBに設定
       });
 
       await upload.done();
@@ -90,6 +80,49 @@ export class Storage {
       console.error('Error uploading files:', error);
       throw new Error('ファイルのアップロードに失敗しました');
     }
+  }
+
+  private async createZipStream(files: File[], password: string): Promise<ReadableStream> {
+    const zipStream = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
+      password,
+      zipCrypto: true,
+      bufferedWrite: true,
+      level: 5 // 圧縮レベルを中程度に設定（1-9、9が最高圧縮）
+    });
+
+    for (const file of files) {
+      const reader = file.stream().getReader();
+      const chunks: Uint8Array[] = [];
+      let totalSize = 0;
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        // 5MBごとにチャンクをクリア
+        totalSize += value.length;
+        chunks.push(value);
+        if (totalSize >= 5 * 1024 * 1024) {
+          await zipStream.add(
+            file.name || `file-${Date.now()}`,
+            new zip.Uint8ArrayReader(new Uint8Array(Buffer.concat(chunks)))
+          );
+          chunks.length = 0;
+          totalSize = 0;
+        }
+      }
+
+      // 残りのチャンクを追加
+      if (chunks.length > 0) {
+        await zipStream.add(
+          file.name || `file-${Date.now()}`,
+          new zip.Uint8ArrayReader(new Uint8Array(Buffer.concat(chunks)))
+        );
+      }
+    }
+
+    const blob = await zipStream.close();
+    return blob.stream();
   }
 
   private encryptContent(content: Buffer, password: string): Buffer {
