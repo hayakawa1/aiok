@@ -13,16 +13,6 @@ interface FileUploaderProps {
   onUploadComplete: (files: RequestFile[], status: RequestStatus) => Promise<void>
 }
 
-// パスワード生成用のヘルパー関数
-async function generatePassword(requestId: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(requestId);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex.substring(0, 4);
-}
-
 export default function FileUploader({ requestId, isReceiver, onUploadComplete }: FileUploaderProps) {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -35,8 +25,8 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
     setPassword(null);
 
     try {
-      // パスワードを生成
-      const zipPassword = await generatePassword(requestId);
+      // IDからcmを除いた最初の4文字をパスワードとして使用
+      const zipPassword = requestId.replace('cm', '').substring(0, 4);
       setPassword(zipPassword);
 
       // クライアント側でZIPファイルを作成
