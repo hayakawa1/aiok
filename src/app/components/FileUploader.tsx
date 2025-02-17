@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import { RequestFile, RequestStatus } from '@/types/request'
 import JSZip from 'jszip'
+import { getStorage } from '@/lib/storage'
 
 interface FileUploaderProps {
   requestId: string
@@ -16,56 +17,43 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
   const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
-  const createZipFile = async (files: File[]): Promise<File> => {
-    const zip = new JSZip();
-    
-    // ファイルをZIPに追加
-    for (const file of files) {
-      zip.file(file.name, file);
-    }
-    
-    // ZIPファイルを生成
-    const content = await zip.generateAsync({ type: 'blob' });
-    
-    // Fileオブジェクトとして返す
-    return new File([content], 'files.zip', { type: 'application/zip' });
-  };
-
   const handleUpload = async (files: File[]) => {
     setUploading(true);
     setError(null);
 
     try {
-      const formData = new FormData();
-      
-      if (files.length > 1) {
-        // 複数ファイルの場合はZIPにまとめる
-        const zipFile = await createZipFile(files);
-        formData.append('files', zipFile);
-        setUploadProgress(50); // ZIP作成完了
-      } else {
-        // 単一ファイルの場合はそのままアップロード
-        formData.append('files', files[0]);
+      // クライアント側でZIPファイルを作成
+      const zip = new JSZip();
+      for (const file of files) {
+        const arrayBuffer = await file.arrayBuffer();
+        zip.file(file.name, arrayBuffer);
       }
+      setUploadProgress(30);
 
-      // FormDataを使用する場合、Content-Typeヘッダーは自動的に設定される
-      const response = await fetch(`/api/requests/${requestId}/upload`, {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        let errorMessage = data.error;
-        if (data.error === 'この依頼はアップロードできない状態です') {
-          errorMessage = '依頼が承認されていない状態です。依頼者の承認後にアップロードが可能になります。';
+      // ZIPファイルを生成
+      const zipBlob = await zip.generateAsync({ 
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: {
+          level: 5
         }
-        throw new Error(errorMessage);
-      }
+      });
+      setUploadProgress(60);
 
+      // 直接R2にアップロード
+      const storage = getStorage();
+      const { fileUrl, key } = await storage.uploadZipFile(new File([zipBlob], 'files.zip', { type: 'application/zip' }));
       setUploadProgress(100);
-      await onUploadComplete([data.requestFile], data.request.status);
+
+      // アップロード完了を通知
+      await onUploadComplete([{
+        id: '0', // 一時的なID
+        requestId: requestId,
+        fileName: 'files.zip',
+        fileUrl,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }], RequestStatus.DELIVERED);
     } catch (error) {
       console.error('Error uploading file:', error);
       setError(error instanceof Error ? error.message : '納品物のアップロードに失敗しました');
@@ -78,12 +66,12 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
-    // ファイルサイズの制限（10MB）
-    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    // ファイルサイズの制限（50MB）
+    const maxSize = 50 * 1024 * 1024;
     const oversizedFiles = acceptedFiles.filter(file => file.size > maxSize);
     
     if (oversizedFiles.length > 0) {
-      setError(`ファイルサイズが大きすぎます（上限: 10MB）: ${oversizedFiles.map(f => f.name).join(', ')}`);
+      setError(`ファイルサイズが大きすぎます（上限: 50MB）: ${oversizedFiles.map(f => f.name).join(', ')}`);
       return;
     }
 
@@ -93,13 +81,13 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: true,
-    maxSize: 10 * 1024 * 1024, // 10MB
+    maxSize: 50 * 1024 * 1024,
     onDropRejected: (rejectedFiles) => {
       const oversizedFiles = rejectedFiles
-        .filter(f => f.file.size > 10 * 1024 * 1024)
+        .filter(f => f.file.size > 50 * 1024 * 1024)
         .map(f => f.file.name);
       if (oversizedFiles.length > 0) {
-        setError(`ファイルサイズが大きすぎます（上限: 10MB）: ${oversizedFiles.join(', ')}`);
+        setError(`ファイルサイズが大きすぎます（上限: 50MB）: ${oversizedFiles.join(', ')}`);
       }
     }
   });
