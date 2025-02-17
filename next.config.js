@@ -32,9 +32,8 @@ const nextConfig = {
   },
   output: 'standalone',
   api: {
-    bodyParser: {
-      sizeLimit: '10mb'
-    }
+    bodyParser: false,
+    responseLimit: false
   }
 }
 
