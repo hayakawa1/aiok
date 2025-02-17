@@ -1,10 +1,11 @@
+'use client'
+
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import { RequestFile, RequestStatus } from '@/types/request'
 import JSZip from 'jszip'
-import { getStorage } from '@/lib/storage'
 
 interface FileUploaderProps {
   requestId: string
@@ -40,12 +41,41 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
       });
       setUploadProgress(60);
 
-      // 直接R2にアップロード
-      const storage = getStorage();
-      const { fileUrl, key } = await storage.uploadZipFile(new File([zipBlob], 'files.zip', { type: 'application/zip' }));
+      // Presigned URLを取得
+      const response = await fetch(`/api/requests/${requestId}/upload`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename: 'files.zip'
+        })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'アップロードURLの取得に失敗しました');
+      }
+
+      const { uploadUrl, fileKey } = await response.json();
+
+      // ZIPファイルを直接アップロード
+      const uploadResponse = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: zipBlob,
+        headers: {
+          'Content-Type': 'application/zip'
+        }
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('ファイルのアップロードに失敗しました');
+      }
+
       setUploadProgress(100);
 
       // アップロード完了を通知
+      const fileUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${fileKey}`;
       await onUploadComplete([{
         id: '0', // 一時的なID
         requestId: requestId,

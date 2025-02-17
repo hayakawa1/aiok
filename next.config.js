@@ -29,11 +29,14 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     optimizeCss: true,
+    serverComponentsExternalPackages: ['@aws-sdk']
   },
   output: 'standalone',
   api: {
-    bodyParser: false,
-    responseLimit: false
+    bodyParser: {
+      sizeLimit: '10mb'
+    },
+    responseLimit: '10mb'
   }
 }
 

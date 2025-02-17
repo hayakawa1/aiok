@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import * as zip from '@zip.js/zip.js';
 import crypto from 'crypto';
 import { Readable } from 'stream';
@@ -20,55 +21,38 @@ export class Storage {
     this.bucket = process.env.R2_BUCKET!;
   }
 
-  async uploadRequestFile(file: File): Promise<string> {
-    try {
-      // ファイル名から拡張子を取得
-      const ext = file.name.split('.').pop();
-      // タイムスタンプを含むユニークなファイル名を生成
-      const timestamp = new Date().getTime();
-      const key = `requests/${timestamp}-${Math.random().toString(36).substring(7)}.${ext}`;
-
-      const arrayBuffer = await file.arrayBuffer();
-      const upload = new Upload({
-        client: this.client,
-        params: {
-          Bucket: this.bucket,
-          Key: key,
-          Body: Buffer.from(arrayBuffer),
-          ContentType: file.type,
-          ACL: 'public-read'
-        },
-      });
-
-      await upload.done();
-      return `${process.env.R2_PUBLIC_URL}/${key}`;
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      throw new Error('ファイルのアップロードに失敗しました');
-    }
-  }
-
   async uploadRequestFiles(files: File[], requestId: string): Promise<{ fileUrl: string; password: string }> {
     try {
       // リクエストIDからパスワードを生成
       const hash = crypto.createHash('md5').update(requestId).digest('hex');
       const password = hash.substring(0, 4);
 
+      // ZIPファイルの作成
+      const zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
+        password,
+        zipCrypto: true // 従来のZIP暗号化を使用（より広く互換性がある）
+      });
+
+      // ファイルをZIPに追加
+      for (const file of files) {
+        const arrayBuffer = await file.arrayBuffer();
+        await zipWriter.add(file.name || `file-${Date.now()}`, new zip.Uint8ArrayReader(new Uint8Array(arrayBuffer)));
+      }
+
+      // ZIPファイルを完成させる
+      const zipBlob = await zipWriter.close();
       const timestamp = new Date().getTime();
       const key = `requests/${timestamp}-${Math.random().toString(36).substring(7)}.zip`;
 
-      // ストリーミングアップロード用の設定
       const upload = new Upload({
         client: this.client,
         params: {
           Bucket: this.bucket,
           Key: key,
-          Body: await this.createZipStream(files, password),
+          Body: zipBlob,
           ContentType: 'application/zip',
           ACL: 'public-read'
-        },
-        queueSize: 1, // 同時アップロード数を制限
-        partSize: 5 * 1024 * 1024 // パートサイズを5MBに設定
+        }
       });
 
       await upload.done();
@@ -264,6 +248,54 @@ export class Storage {
     } catch (error) {
       console.error('Error deleting file:', error);
       throw new Error('ファイルの削除に失敗しました');
+    }
+  }
+
+  async uploadZipFile(file: File): Promise<{ fileUrl: string; key: string }> {
+    try {
+      const timestamp = new Date().getTime();
+      const key = `requests/${timestamp}-${Math.random().toString(36).substring(7)}-${file.name}`;
+
+      const arrayBuffer = await file.arrayBuffer();
+      const upload = new Upload({
+        client: this.client,
+        params: {
+          Bucket: this.bucket,
+          Key: key,
+          Body: Buffer.from(arrayBuffer),
+          ContentType: 'application/zip',
+          ACL: 'public-read'
+        }
+      });
+
+      await upload.done();
+      return {
+        fileUrl: `${process.env.R2_PUBLIC_URL}/${key}`,
+        key
+      };
+    } catch (error) {
+      console.error('Error uploading zip file:', error);
+      throw new Error('ZIPファイルのアップロードに失敗しました');
+    }
+  }
+
+  async getPresignedUploadUrl(filename: string): Promise<{ url: string; key: string }> {
+    try {
+      const timestamp = new Date().getTime();
+      const key = `requests/${timestamp}-${Math.random().toString(36).substring(7)}-${filename}`;
+
+      const command = new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        ContentType: 'application/zip',
+        ACL: 'public-read'
+      });
+
+      const url = await getSignedUrl(this.client, command, { expiresIn: 3600 });
+      return { url, key };
+    } catch (error) {
+      console.error('Error generating presigned URL:', error);
+      throw new Error('アップロードURLの生成に失敗しました');
     }
   }
 }

@@ -98,62 +98,22 @@ export async function POST(req: NextRequest, { params }: RequestContext): Promis
       }, { status: 400 })
     }
 
-    try {
-      const formData = await req.formData()
-      const files = formData.getAll('files') as File[]
-
-      if (files.length === 0) {
-        return NextResponse.json({ error: 'ファイルが選択されていません' }, { status: 400 })
-      }
-
-      const storage = getStorage()
-      const { fileUrl, password } = await storage.uploadRequestFiles(files, requestData.id)
-
-      // ファイル情報を保存（ZIPファイルとして1つ保存）
-      const requestFileData = {
-        requestId: requestData.id,
-        fileName: files[0].name,
-        fileUrl
-      } as const
-
-      const requestFile = await prisma.requestFile.create({
-        data: {
-          ...requestFileData,
-          ...(password ? { password } : {})
-        }
-      })
-
-      // ファイルのアップロードが成功したら、リクエストをDELIVEREDに更新
-      const updatedRequest = await prisma.request.update({
-        where: { id: requestData.id },
-        data: {
-          status: RequestStatus.DELIVERED
-        },
-        include: requestInclude
-      }) as RequestWithRelations
-
-      return NextResponse.json(
-        { 
-          requestFile: { fileUrl, password },
-          request: updatedRequest
-        },
-        { 
-          status: 200,
-          headers: {
-            'Access-Control-Allow-Origin': req.headers.get('origin') || '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Access-Control-Allow-Credentials': 'true'
-          }
-        }
-      )
-    } catch (error) {
-      console.error('Error uploading delivery:', error)
-      return NextResponse.json(
-        { error: '納品物のアップロードに失敗しました' },
-        { status: 500 }
-      )
+    // リクエストボディからファイル名を取得
+    const { filename } = await req.json();
+    
+    if (!filename) {
+      return NextResponse.json({ error: 'ファイル名が指定されていません' }, { status: 400 });
     }
+
+    const storage = getStorage();
+    const { url, key } = await storage.getPresignedUploadUrl(filename);
+
+    return NextResponse.json({ 
+      uploadUrl: url,
+      fileKey: key,
+      requestId: params.id
+    });
+
   } catch (error) {
     console.error('Error:', error)
     return NextResponse.json({ error: '内部エラーが発生しました' }, { status: 500 })

@@ -62,6 +62,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/api/stripe/:path*',
-    '/api/requests/:id/upload'
+    '/api/requests/:id/upload',
+    '/api/auth/:path*'
   ]
 } 
