@@ -2,8 +2,9 @@
   "git": {
     "deploymentEnabled": {
       "main": true,
-      "development": false,
-      "preview": true
+      "development": true,
+      "preview": true,
+      "feature/setup-deploy-flow": true
     }
   },
   "github": {
