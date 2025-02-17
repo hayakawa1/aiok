@@ -72,18 +72,29 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
         throw new Error('ファイルのアップロードに失敗しました');
       }
 
+      setUploadProgress(90);
+
+      // アップロード完了をAPIに通知
+      const completeResponse = await fetch(`/api/requests/${requestId}/upload/complete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fileName: 'files.zip',
+          fileKey: fileKey
+        })
+      });
+
+      if (!completeResponse.ok) {
+        throw new Error('アップロード完了の通知に失敗しました');
+      }
+
+      const { file } = await completeResponse.json();
       setUploadProgress(100);
 
       // アップロード完了を通知
-      const fileUrl = `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${fileKey}`;
-      await onUploadComplete([{
-        id: '0', // 一時的なID
-        requestId: requestId,
-        fileName: 'files.zip',
-        fileUrl,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }], RequestStatus.DELIVERED);
+      await onUploadComplete([file], RequestStatus.DELIVERED);
     } catch (error) {
       console.error('Error uploading file:', error);
       setError(error instanceof Error ? error.message : '納品物のアップロードに失敗しました');
