@@ -31,6 +31,11 @@ const nextConfig = {
     optimizeCss: true,
   },
   output: 'standalone',
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb'
+    }
+  }
 }
 
 module.exports = nextConfig 

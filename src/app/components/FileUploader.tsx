@@ -77,12 +77,31 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
+
+    // ファイルサイズの制限（10MB）
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    const oversizedFiles = acceptedFiles.filter(file => file.size > maxSize);
+    
+    if (oversizedFiles.length > 0) {
+      setError(`ファイルサイズが大きすぎます（上限: 10MB）: ${oversizedFiles.map(f => f.name).join(', ')}`);
+      return;
+    }
+
     await handleUpload(acceptedFiles);
   }, [handleUpload]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: true
+    multiple: true,
+    maxSize: 10 * 1024 * 1024, // 10MB
+    onDropRejected: (rejectedFiles) => {
+      const oversizedFiles = rejectedFiles
+        .filter(f => f.file.size > 10 * 1024 * 1024)
+        .map(f => f.file.name);
+      if (oversizedFiles.length > 0) {
+        setError(`ファイルサイズが大きすぎます（上限: 10MB）: ${oversizedFiles.join(', ')}`);
+      }
+    }
   });
 
   if (!isReceiver) {
