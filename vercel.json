@@ -1,17 +1,9 @@
 {
   "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "development": true,
-      "preview": true,
-      "feature/setup-deploy-flow": true
-    }
+    "deploymentEnabled": true
   },
   "github": {
-    "enabled": true,
-    "silent": false,
-    "autoAlias": true,
-    "autoJobCancelation": true
+    "enabled": true
   },
   "functions": {
     "src/app/api/**/*": {
