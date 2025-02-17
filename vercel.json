@@ -8,7 +8,9 @@
   },
   "github": {
     "enabled": true,
-    "silent": false
+    "silent": false,
+    "autoAlias": true,
+    "autoJobCancelation": true
   },
   "functions": {
     "src/app/api/**/*": {
@@ -45,5 +47,11 @@
       "methods": ["OPTIONS"],
       "dest": "/api/cors"
     }
-  ]
+  ],
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
+  "checks": {
+    "typescriptErrors": {
+      "name": "TypeScript"
+    }
+  }
 } 
