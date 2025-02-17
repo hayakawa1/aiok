@@ -2,6 +2,8 @@ import { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { prisma } from '@/lib/prisma'
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -11,30 +13,30 @@ export const authOptions: NextAuthOptions = {
   ],
   cookies: {
     sessionToken: {
-      name: 'next-auth.session-token',
+      name: isDevelopment ? 'next-auth.session-token' : '__Secure-next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production'
+        secure: !isDevelopment
       }
     },
     callbackUrl: {
-      name: 'next-auth.callback-url',
+      name: isDevelopment ? 'next-auth.callback-url' : '__Secure-next-auth.callback-url',
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production'
+        secure: !isDevelopment
       }
     },
     csrfToken: {
-      name: 'next-auth.csrf-token',
+      name: isDevelopment ? 'next-auth.csrf-token' : '__Secure-next-auth.csrf-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production'
+        secure: !isDevelopment
       }
     }
   },
