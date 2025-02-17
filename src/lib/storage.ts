@@ -288,10 +288,16 @@ export class Storage {
         Bucket: this.bucket,
         Key: key,
         ContentType: 'application/zip',
-        ACL: 'public-read'
+        ACL: 'public-read',
+        Metadata: {
+          'Content-Type': 'application/zip'
+        }
       });
 
-      const url = await getSignedUrl(this.client, command, { expiresIn: 3600 });
+      const url = await getSignedUrl(this.client, command, { 
+        expiresIn: 3600,
+        signableHeaders: new Set(['host'])
+      });
       return { url, key };
     } catch (error) {
       console.error('Error generating presigned URL:', error);
