@@ -48,6 +48,7 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
         formData.append('files', files[0]);
       }
 
+      // FormDataを使用する場合、Content-Typeヘッダーは自動的に設定される
       const response = await fetch(`/api/requests/${requestId}/upload`, {
         method: 'POST',
         body: formData
