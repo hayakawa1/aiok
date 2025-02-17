@@ -4,35 +4,33 @@ import { getToken } from 'next-auth/jwt'
 
 export async function middleware(request: NextRequest) {
   // CORSヘッダーの設定
+  const response = NextResponse.next()
+  response.headers.set('Access-Control-Allow-Credentials', 'true')
+  response.headers.set('Access-Control-Allow-Origin', request.headers.get('origin') || '*')
+  response.headers.set('Access-Control-Allow-Methods', 'GET,DELETE,PATCH,POST,PUT,OPTIONS')
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+
+  // OPTIONSリクエストの場合は即座に返す
   if (request.method === 'OPTIONS') {
     return new NextResponse(null, {
       status: 200,
-      headers: {
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Origin': request.headers.get('origin') || '*',
-        'Access-Control-Allow-Credentials': 'true'
-      },
+      headers: response.headers
     })
   }
 
   // ファイルアップロードエンドポイントの処理
-  if (request.nextUrl.pathname.includes('/api/requests') && request.nextUrl.pathname.endsWith('/upload')) {
+  if (request.nextUrl.pathname.includes('/api/requests') && request.nextUrl.pathname.includes('/upload')) {
     const token = await getToken({ req: request })
     if (!token) {
       return new NextResponse(
         JSON.stringify({ error: 'Authentication required' }),
         { 
           status: 401, 
-          headers: { 
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': request.headers.get('origin') || '*',
-            'Access-Control-Allow-Credentials': 'true'
-          } 
+          headers: response.headers
         }
       )
     }
-    return NextResponse.next()
+    return response
   }
 
   // Stripe関連エンドポイントの保護
@@ -42,7 +40,7 @@ export async function middleware(request: NextRequest) {
     if (country && country !== 'JP') {
       return new NextResponse(
         JSON.stringify({ error: 'Access denied: Country not allowed' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } }
+        { status: 403, headers: response.headers }
       )
     }
 
@@ -51,18 +49,19 @@ export async function middleware(request: NextRequest) {
     if (!token) {
       return new NextResponse(
         JSON.stringify({ error: 'Authentication required' }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } }
+        { status: 401, headers: response.headers }
       )
     }
   }
 
-  return NextResponse.next()
+  return response
 }
 
 export const config = {
   matcher: [
     '/api/stripe/:path*',
-    '/api/requests/:id/upload',
+    '/api/requests/:path*/upload',
+    '/api/requests/:path*/upload/complete',
     '/api/auth/:path*'
   ]
 } 
