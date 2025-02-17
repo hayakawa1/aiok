@@ -6,12 +6,21 @@ import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import { RequestFile, RequestStatus } from '@/types/request'
 import JSZip from 'jszip'
-import crypto from 'crypto'
 
 interface FileUploaderProps {
   requestId: string
   isReceiver: boolean
   onUploadComplete: (files: RequestFile[], status: RequestStatus) => Promise<void>
+}
+
+// パスワード生成用のヘルパー関数
+async function generatePassword(requestId: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(requestId);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex.substring(0, 4);
 }
 
 export default function FileUploader({ requestId, isReceiver, onUploadComplete }: FileUploaderProps) {
@@ -27,8 +36,7 @@ export default function FileUploader({ requestId, isReceiver, onUploadComplete }
 
     try {
       // パスワードを生成
-      const hash = crypto.createHash('md5').update(requestId).digest('hex');
-      const zipPassword = hash.substring(0, 4);
+      const zipPassword = await generatePassword(requestId);
       setPassword(zipPassword);
 
       // クライアント側でZIPファイルを作成
