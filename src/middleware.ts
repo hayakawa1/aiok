@@ -3,6 +3,30 @@ import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
 export async function middleware(request: NextRequest) {
+  // CORSヘッダーの設定
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Origin': '*',
+      },
+    })
+  }
+
+  // ファイルアップロードエンドポイントの処理
+  if (request.nextUrl.pathname.includes('/api/requests') && request.nextUrl.pathname.endsWith('/upload')) {
+    const token = await getToken({ req: request })
+    if (!token) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+    return NextResponse.next()
+  }
+
   // Stripe関連エンドポイントの保護
   if (request.nextUrl.pathname.startsWith('/api/stripe')) {
     // 国別制限（Cloudflareヘッダーを使用）
@@ -29,6 +53,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/api/stripe/:path*'
+    '/api/stripe/:path*',
+    '/api/requests/:id/upload'
   ]
 } 

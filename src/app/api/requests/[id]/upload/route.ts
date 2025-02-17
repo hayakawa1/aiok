@@ -42,7 +42,17 @@ export async function POST(req: NextRequest, { params }: RequestContext): Promis
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.email) {
-      return NextResponse.json({ error: '認証が必要です' }, { status: 401 })
+      return NextResponse.json(
+        { error: '認証が必要です' },
+        { 
+          status: 401,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          }
+        }
+      )
     }
 
     const user = await prisma.user.findUnique({
@@ -122,7 +132,20 @@ export async function POST(req: NextRequest, { params }: RequestContext): Promis
         include: requestInclude
       }) as RequestWithRelations
 
-      return NextResponse.json({ requestFile, request: updatedRequest })
+      return NextResponse.json(
+        { 
+          requestFile: { fileUrl, password },
+          request: updatedRequest
+        },
+        { 
+          status: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          }
+        }
+      )
     } catch (error) {
       console.error('Error uploading delivery:', error)
       return NextResponse.json(
