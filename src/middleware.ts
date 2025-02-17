@@ -10,7 +10,8 @@ export async function middleware(request: NextRequest) {
       headers: {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': request.headers.get('origin') || '*',
+        'Access-Control-Allow-Credentials': 'true'
       },
     })
   }
@@ -21,7 +22,14 @@ export async function middleware(request: NextRequest) {
     if (!token) {
       return new NextResponse(
         JSON.stringify({ error: 'Authentication required' }),
-        { status: 401, headers: { 'Content-Type': 'application/json' } }
+        { 
+          status: 401, 
+          headers: { 
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': request.headers.get('origin') || '*',
+            'Access-Control-Allow-Credentials': 'true'
+          } 
+        }
       )
     }
     return NextResponse.next()
